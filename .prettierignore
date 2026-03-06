@@ -1,0 +1,7 @@
+dist/
+coverage/
+node_modules/
+.agents/
+scripts/
+CLAUDE.md
+skills-lock.json
