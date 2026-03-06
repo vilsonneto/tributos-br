@@ -1,3 +1,13 @@
+/**
+ * Parser de entrada → DecimalInternal.
+ *
+ * Converte strings, numbers e objetos com toString() para a representação
+ * interna. Quando recebe `number`, converte via `.toString()` — nunca opera
+ * sobre o float diretamente — para preservar a intenção do usuário.
+ *
+ * @see docs/adr/001-aritmetica-em-strings.md
+ * @module
+ */
 import type { DecimalInput, DecimalInternal } from './types.js'
 
 const ZERO_INTERNAL: DecimalInternal = { sign: 1, digits: '0', exponent: 0 }

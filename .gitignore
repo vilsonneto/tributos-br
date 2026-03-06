@@ -138,8 +138,9 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-# Docs
-/docs
+# Docs (planejamento local, não versionado — exceto ADRs)
+/docs/*
+!/docs/adr
 
 # Claude Code
 /.claude

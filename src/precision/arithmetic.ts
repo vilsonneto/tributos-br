@@ -1,3 +1,17 @@
+/**
+ * Aritmética decimal sobre strings — sem IEEE 754.
+ *
+ * Todas as operações (soma, subtração, multiplicação, divisão) manipulam
+ * exclusivamente strings de dígitos. Nenhum valor intermediário passa por
+ * `Number` como representação de valor monetário.
+ *
+ * Motivação: a SEFAZ rejeita NF-e (erros 629/630) quando
+ * `vProd ≠ vUnCom × qCom`, causado por drift de ponto flutuante.
+ * Exemplo: `1.064 * 39680 = 42219.52000000001` em IEEE 754.
+ *
+ * @see docs/adr/001-aritmetica-em-strings.md — decisão arquitetural completa
+ * @module
+ */
 import type { DecimalInternal } from './types.js'
 
 const ZERO: DecimalInternal = { sign: 1, digits: '0', exponent: 0 }
@@ -147,6 +161,10 @@ function align(
   return { aDigits, bDigits, exponent: minExp }
 }
 
+/**
+ * Soma dois decimais internos. Opera sobre strings de dígitos
+ * para evitar perda de precisão (ex: 0.1 + 0.2 = 0.3 exato).
+ */
 export function addInternal(a: DecimalInternal, b: DecimalInternal): DecimalInternal {
   // Mesmo sinal: soma magnitudes, mantém sinal
   if (a.sign === b.sign) {
@@ -170,12 +188,17 @@ export function addInternal(a: DecimalInternal, b: DecimalInternal): DecimalInte
   return normalize(b.sign, resultDigits, exponent)
 }
 
+/** Subtrai dois decimais internos: `a - b`. Delega para addInternal com sinal invertido. */
 export function subInternal(a: DecimalInternal, b: DecimalInternal): DecimalInternal {
   // a - b = a + (-b)
   const negB: DecimalInternal = b.digits === '0' ? b : { ...b, sign: b.sign === 1 ? -1 : 1 }
   return addInternal(a, negB)
 }
 
+/**
+ * Multiplica dois decimais internos via long multiplication sobre strings.
+ * Cenário SEFAZ típico: `vProd = vUnCom × qCom` deve ser exato.
+ */
 export function mulInternal(a: DecimalInternal, b: DecimalInternal): DecimalInternal {
   if (a.digits === '0' || b.digits === '0') return ZERO
 
@@ -186,6 +209,11 @@ export function mulInternal(a: DecimalInternal, b: DecimalInternal): DecimalInte
   return normalize(sign, digits, exponent)
 }
 
+/**
+ * Divide dois decimais internos via divisão longa sobre strings.
+ * O parâmetro `precision` define dígitos significativos do quociente.
+ * Cenário SEFAZ típico: ICMS por dentro `vBC = vProd / (1 - alíquota)`.
+ */
 export function divInternal(
   a: DecimalInternal,
   b: DecimalInternal,
