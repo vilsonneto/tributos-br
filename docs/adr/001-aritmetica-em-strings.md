@@ -22,6 +22,7 @@ Exemplo classico:
 ```
 
 Em cenarios tributarios, esses erros se acumulam em:
+
 - Calculo de ICMS por dentro: `vBC = vProd / (1 - aliq)`
 - MVA ajustada: `MVA_aj = ((1 + MVA) * (1 - ALQ_inter) / (1 - ALQ_intra)) - 1`
 - Rateio de frete proporcional entre itens
@@ -45,13 +46,15 @@ A representacao interna e:
 ```
 
 Os algoritmos usados sao os classicos de aritmetica escolar:
+
 - **Soma/subtracao**: alinhamento por expoente + soma/subtracao digito a digito com carry/borrow
-- **Multiplicacao**: long multiplication O(n*m)
+- **Multiplicacao**: long multiplication O(n\*m)
 - **Divisao**: divisao longa com precisao configuravel
 
 ## Consequencias
 
 ### Positivas
+
 - **Precisao exata**: `0.1 + 0.2 = 0.3`, sem surpresas
 - **Zero dependencias**: nao depende de libs como decimal.js, big.js, etc.
 - **Conformidade SEFAZ**: elimina rejeicoes 629/630 por drift
@@ -59,23 +62,25 @@ Os algoritmos usados sao os classicos de aritmetica escolar:
 - **Tree-shakeable**: consumidores importam apenas o que usam
 
 ### Negativas
-- **Performance**: O(n*m) para multiplicacao vs O(1) amortizado de IEEE 754
+
+- **Performance**: O(n\*m) para multiplicacao vs O(1) amortizado de IEEE 754
 - **Complexidade de implementacao**: mais codigo que usar `Number`
 - **Tamanho do bundle**: maior que uma solucao baseada em `Number`
 
 ### Mitigacao de performance
+
 Para o caso de uso tributario (valores monetarios com 2-10 casas decimais
 e quantidades com ate 15 digitos), a performance e mais que suficiente.
 O gargalo real em sistemas fiscais e I/O (rede, banco de dados), nao aritmetica.
 
 ## Alternativas consideradas
 
-| Alternativa | Por que nao |
-|---|---|
-| `Number` (IEEE 754) | Drift causa rejeicao SEFAZ. Inaceitavel. |
+| Alternativa                  | Por que nao                                                             |
+| ---------------------------- | ----------------------------------------------------------------------- |
+| `Number` (IEEE 754)          | Drift causa rejeicao SEFAZ. Inaceitavel.                                |
 | `BigInt` com fator de escala | Requer reimplementar aritmetica decimal. Mesma complexidade, sem ganho. |
-| `decimal.js` / `big.js` | Dependencia externa. Projeto tem meta de zero deps. |
-| Decimal128 (proposta TC39) | Ainda em Stage 1 (mar/2026). Nao disponivel em Node 18. |
+| `decimal.js` / `big.js`      | Dependencia externa. Projeto tem meta de zero deps.                     |
+| Decimal128 (proposta TC39)   | Ainda em Stage 1 (mar/2026). Nao disponivel em Node 18.                 |
 
 ## Referencias
 
