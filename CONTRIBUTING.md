@@ -41,6 +41,7 @@ npx changeset add
 ```
 
 O comando vai perguntar:
+
 1. Qual pacote foi alterado (`tributos-br`)
 2. Tipo de mudança (`patch`, `minor` ou `major`)
 3. Descrição da mudança
@@ -76,16 +77,16 @@ O template de PR no GitHub já inclui essa checklist.
 
 ## Scripts disponíveis
 
-| Comando | Descrição |
-|---|---|
-| `npm test` | Roda todos os testes com Vitest |
-| `npm run test:watch` | Testes em modo watch |
-| `npm run test:coverage` | Testes com cobertura |
-| `npm run typecheck` | Verificação de tipos (tsc) |
-| `npm run lint` | ESLint |
-| `npm run format` | Formata com Prettier |
-| `npm run format:check` | Verifica formatação |
-| `npm run build` | Build via tsup (ESM + CJS) |
+| Comando                 | Descrição                       |
+| ----------------------- | ------------------------------- |
+| `npm test`              | Roda todos os testes com Vitest |
+| `npm run test:watch`    | Testes em modo watch            |
+| `npm run test:coverage` | Testes com cobertura            |
+| `npm run typecheck`     | Verificação de tipos (tsc)      |
+| `npm run lint`          | ESLint                          |
+| `npm run format`        | Formata com Prettier            |
+| `npm run format:check`  | Verifica formatação             |
+| `npm run build`         | Build via tsup (ESM + CJS)      |
 
 ## Dúvidas?
 

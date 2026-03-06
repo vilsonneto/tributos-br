@@ -2,10 +2,10 @@
 
 ## Versões suportadas
 
-| Versão | Suporte |
-|---|---|
-| >= 1.0.0 | Patches de segurança |
-| < 1.0.0 | Sem suporte (pré-release) |
+| Versão   | Suporte                   |
+| -------- | ------------------------- |
+| >= 1.0.0 | Patches de segurança      |
+| < 1.0.0  | Sem suporte (pré-release) |
 
 ## Como reportar uma vulnerabilidade
 
@@ -25,11 +25,11 @@ Use uma das opções abaixo:
 
 ## Prazo de resposta
 
-| Etapa | Prazo |
-|---|---|
-| Confirmação de recebimento | Até 48 horas |
-| Avaliação inicial | Até 7 dias |
-| Patch para vulnerabilidades confirmadas | Até 30 dias |
+| Etapa                                   | Prazo        |
+| --------------------------------------- | ------------ |
+| Confirmação de recebimento              | Até 48 horas |
+| Avaliação inicial                       | Até 7 dias   |
+| Patch para vulnerabilidades confirmadas | Até 30 dias  |
 
 ## Escopo
 
