@@ -6,16 +6,16 @@ body:
   - type: textarea
     id: problem
     attributes:
-      label: Qual problema tributario resolve?
-      description: Descreva o cenario fiscal que a feature atende.
+      label: Qual problema tributário resolve?
+      description: Descreva o cenário fiscal que a feature atende.
     validations:
       required: true
 
   - type: textarea
     id: solution
     attributes:
-      label: Solucao proposta
-      description: Como voce imagina a API? Inclua exemplos de codigo.
+      label: Solução proposta
+      description: Como você imagina a API? Inclua exemplos de código.
       render: typescript
     validations:
       required: true
@@ -24,8 +24,8 @@ body:
     id: legal-basis
     attributes:
       label: Base legal
-      description: 'Convenio ICMS, Lei Complementar, Portaria SEFAZ, etc.'
-      placeholder: 'Ex: Convenio ICMS 142/2018, LC 214/2025'
+      description: 'Convênio ICMS, Lei Complementar, Portaria SEFAZ, etc.'
+      placeholder: 'Ex: Convênio ICMS 142/2018, LC 214/2025'
     validations:
       required: false
 
@@ -33,6 +33,6 @@ body:
     id: context
     attributes:
       label: Contexto adicional
-      description: Qualquer informacao extra relevante.
+      description: Qualquer informação extra relevante.
     validations:
       required: false

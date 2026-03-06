@@ -1,19 +1,19 @@
-## Tipo da mudanca
+## Tipo da mudança
 
 - [ ] feat: Nova funcionalidade
-- [ ] fix: Correcao de bug
-- [ ] docs: Documentacao
-- [ ] chore: Manutencao
-- [ ] refactor: Refatoracao
+- [ ] fix: Correção de bug
+- [ ] docs: Documentação
+- [ ] chore: Manutenção
+- [ ] refactor: Refatoração
 - [ ] test: Testes
 
 ## Issue relacionado
 
 Closes #
 
-## Descricao
+## Descrição
 
-<!-- Descreva o que foi feito e por que. -->
+<!-- Descreva o que foi feito e por quê. -->
 
 ## Checklist
 
@@ -22,4 +22,4 @@ Closes #
 - [ ] `npm run lint` passa
 - [ ] `npm run format:check` passa
 - [ ] `npm run test` passa
-- [ ] Changeset incluido (`npx changeset add`)
+- [ ] Changeset incluído (`npx changeset add`)

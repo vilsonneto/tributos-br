@@ -6,7 +6,7 @@ body:
   - type: input
     id: version
     attributes:
-      label: Versao do tributos-br
+      label: Versão do tributos-br
       description: 'Execute: npm list tributos-br'
       placeholder: '0.1.0'
     validations:
@@ -15,7 +15,7 @@ body:
   - type: input
     id: node-version
     attributes:
-      label: Versao do Node.js
+      label: Versão do Node.js
       description: 'Execute: node --version'
       placeholder: 'v22.22.0'
     validations:
@@ -24,7 +24,7 @@ body:
   - type: textarea
     id: description
     attributes:
-      label: Descricao do problema
+      label: Descrição do problema
       description: Descreva o bug de forma clara e objetiva.
     validations:
       required: true
@@ -32,8 +32,8 @@ body:
   - type: textarea
     id: reproduction
     attributes:
-      label: Codigo para reproduzir
-      description: Codigo minimo que reproduz o problema.
+      label: Código para reproduzir
+      description: Código mínimo que reproduz o problema.
       render: typescript
     validations:
       required: true
@@ -58,6 +58,6 @@ body:
     id: context
     attributes:
       label: Contexto adicional
-      description: Qualquer informacao extra (screenshots, logs, etc.).
+      description: Qualquer informação extra (screenshots, logs, etc.).
     validations:
       required: false
