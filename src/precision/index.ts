@@ -1,3 +1,5 @@
 // tributos-br/precision — motor de precisão decimal arbitrária
-// Exportações serão adicionadas conforme os módulos forem implementados.
-export {}
+export { Decimal } from './decimal.js'
+export type { DecimalInput } from './decimal.js'
+export { RoundingMode } from './types.js'
+export type { DecimalInternal, PrecisionConfig } from './types.js'
