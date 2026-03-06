@@ -55,8 +55,12 @@ export interface PrecisionConfig {
 }
 
 /**
- * Tipos aceitos como entrada para criar um Decimal.
- * A referência circular com Decimal será resolvida no módulo decimal.ts.
+ * Tipos aceitos como entrada nos módulos internos (parse, arithmetic).
+ *
+ * Usa `{ toString(): string }` para aceitar qualquer objeto com toString(),
+ * incluindo a classe Decimal — sem dependência circular.
+ * A API pública re-exporta `DecimalInput` como `string | number | Decimal`
+ * em decimal.ts para tipagem mais precisa.
  */
 export type DecimalInput = string | number | { toString(): string }
 
