@@ -22,34 +22,64 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": { "types": "./dist/index.d.ts", "default": "./dist/index.js" },
-      "require": { "types": "./dist/index.d.cts", "default": "./dist/index.cjs" }
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     },
     "./precision": {
-      "import": { "types": "./dist/precision/index.d.ts", "default": "./dist/precision/index.js" },
-      "require": { "types": "./dist/precision/index.d.cts", "default": "./dist/precision/index.cjs" }
+      "import": {
+        "types": "./dist/precision/index.d.ts",
+        "default": "./dist/precision/index.js"
+      },
+      "require": {
+        "types": "./dist/precision/index.d.cts",
+        "default": "./dist/precision/index.cjs"
+      }
     }
   },
-  "files": ["dist", "README.md", "LICENSE"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsup",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "lint": "eslint src/",
+    "lint": "eslint --no-error-on-unmatched-pattern src/",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run typecheck && npm run test && npm run build"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/node": "^22.0.0",
     "@vitest/coverage-v8": "^3.0.0",
+    "eslint": "^10.0.2",
     "tsup": "^8.0.0",
     "typescript": "^5.7.0",
+    "typescript-eslint": "^8.56.1",
     "vitest": "^3.0.0"
   },
   "keywords": [
-    "tributario", "fiscal", "icms", "ipi", "nfe", "nota-fiscal",
-    "brasil", "precisao", "decimal", "arredondamento", "sefaz"
+    "tributario",
+    "fiscal",
+    "icms",
+    "ipi",
+    "nfe",
+    "nota-fiscal",
+    "brasil",
+    "precisao",
+    "decimal",
+    "arredondamento",
+    "sefaz"
   ],
-  "engines": { "node": ">=18" }
+  "engines": {
+    "node": ">=18"
+  }
 }
