@@ -3,6 +3,19 @@
   "version": "0.1.0",
   "description": "Motor de cálculo tributário brasileiro com precisão decimal arbitrária",
   "license": "MIT",
+  "author": {
+    "name": "Vilson Padilha",
+    "url": "https://github.com/vilsonneto"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vilsonneto/tributos-br.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vilsonneto/tributos-br/issues"
+  },
+  "homepage": "https://vilsonneto.github.io/tributos-br",
+  "sideEffects": false,
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
