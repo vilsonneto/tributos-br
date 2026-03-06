@@ -6,6 +6,7 @@ export default defineConfig({
     include: ['src/**/*.test.ts', 'src/__tests__/**/*.ts'],
     coverage: {
       provider: 'v8',
+      reporter: ['text', 'lcov', 'html'],
       include: ['src/**/*.ts'],
       exclude: ['src/**/*.test.ts', 'src/__tests__/**', 'src/index.ts', 'src/precision/index.ts'],
       thresholds: {
