@@ -1,0 +1,60 @@
+/**
+ * Modos de arredondamento suportados.
+ *
+ * HALF_UP é o padrão da SEFAZ para NF-e.
+ * HALF_EVEN (Banker's rounding) é comum em relatórios contábeis.
+ */
+export enum RoundingMode {
+  /** Arredonda metade para cima (padrão SEFAZ) */
+  HALF_UP = 'HALF_UP',
+  /** Arredonda metade para o par mais próximo (Banker's rounding) */
+  HALF_EVEN = 'HALF_EVEN',
+  /** Arredonda metade para baixo */
+  HALF_DOWN = 'HALF_DOWN',
+  /** Arredonda para longe do zero */
+  UP = 'UP',
+  /** Arredonda em direção ao zero (trunca) */
+  DOWN = 'DOWN',
+  /** Arredonda em direção a +Infinity */
+  CEILING = 'CEILING',
+  /** Arredonda em direção a -Infinity */
+  FLOOR = 'FLOOR',
+}
+
+/**
+ * Representação interna de um número decimal.
+ *
+ * Valor real = sign × int(digits) × 10^exponent
+ *
+ * Exemplos:
+ * - 1.23   → { sign: 1, digits: "123", exponent: -2 }
+ * - -0.005 → { sign: -1, digits: "5", exponent: -3 }
+ * - 42     → { sign: 1, digits: "42", exponent: 0 }
+ */
+export interface DecimalInternal {
+  readonly sign: 1 | -1
+  readonly digits: string
+  readonly exponent: number
+}
+
+/**
+ * Configuração de precisão e arredondamento.
+ */
+export interface PrecisionConfig {
+  readonly precision: number
+  readonly rounding: RoundingMode
+}
+
+/**
+ * Tipos aceitos como entrada para criar um Decimal.
+ * A referência circular com Decimal será resolvida no módulo decimal.ts.
+ */
+export type DecimalInput = string | number | { toString(): string }
+
+/**
+ * Configuração padrão: 20 casas decimais, HALF_UP (norma SEFAZ).
+ */
+export const DEFAULT_CONFIG: PrecisionConfig = {
+  precision: 20,
+  rounding: RoundingMode.HALF_UP,
+} as const
