@@ -1,0 +1,38 @@
+name: Feature Request
+description: Sugerir uma nova funcionalidade
+title: '[feat]: '
+labels: ['feat']
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Qual problema tributario resolve?
+      description: Descreva o cenario fiscal que a feature atende.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solucao proposta
+      description: Como voce imagina a API? Inclua exemplos de codigo.
+      render: typescript
+    validations:
+      required: true
+
+  - type: textarea
+    id: legal-basis
+    attributes:
+      label: Base legal
+      description: 'Convenio ICMS, Lei Complementar, Portaria SEFAZ, etc.'
+      placeholder: 'Ex: Convenio ICMS 142/2018, LC 214/2025'
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Contexto adicional
+      description: Qualquer informacao extra relevante.
+    validations:
+      required: false

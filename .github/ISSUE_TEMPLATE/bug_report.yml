@@ -1,0 +1,63 @@
+name: Bug Report
+description: Reportar um bug no tributos-br
+title: '[bug]: '
+labels: ['fix']
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Versao do tributos-br
+      description: 'Execute: npm list tributos-br'
+      placeholder: '0.1.0'
+    validations:
+      required: true
+
+  - type: input
+    id: node-version
+    attributes:
+      label: Versao do Node.js
+      description: 'Execute: node --version'
+      placeholder: 'v22.22.0'
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Descricao do problema
+      description: Descreva o bug de forma clara e objetiva.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Codigo para reproduzir
+      description: Codigo minimo que reproduz o problema.
+      render: typescript
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Resultado atual
+      description: O que acontece hoje.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Resultado esperado
+      description: O que deveria acontecer.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Contexto adicional
+      description: Qualquer informacao extra (screenshots, logs, etc.).
+    validations:
+      required: false
