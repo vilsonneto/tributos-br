@@ -47,7 +47,9 @@ export function calcMvaAjustada(input: CalcMvaAjustadaInput): ResultadoMva {
   const aliqInternaEfetiva = aliquotaInterna.add(fecop)
 
   // ((1 + mvaOriginal) × (1 − aliquotaInterestadual)) ÷ (1 − aliqInternaEfetiva) − 1
-  const numerador = Decimal.one().add(mvaOriginalDecimal).mul(Decimal.one().sub(aliquotaInterestadual))
+  const numerador = Decimal.one()
+    .add(mvaOriginalDecimal)
+    .mul(Decimal.one().sub(aliquotaInterestadual))
   const denominador = Decimal.one().sub(aliqInternaEfetiva)
   const mvaAjustada = numerador.div(denominador).sub(Decimal.one())
 

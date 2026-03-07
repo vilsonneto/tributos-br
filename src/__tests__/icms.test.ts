@@ -32,7 +32,11 @@ describe('calcIcms', () => {
 
     it('incluirImpostoNaBase: false explícito — mesmo resultado que default', () => {
       const padrao = calcIcms({ valorProduto: '1000', aliquota: '0.18' })
-      const explicito = calcIcms({ valorProduto: '1000', aliquota: '0.18', incluirImpostoNaBase: false })
+      const explicito = calcIcms({
+        valorProduto: '1000',
+        aliquota: '0.18',
+        incluirImpostoNaBase: false,
+      })
       expect(padrao.imposto.toString()).toBe(explicito.imposto.toString())
     })
 
@@ -76,7 +80,11 @@ describe('calcIcms', () => {
 
     it('por dentro tem imposto maior que por fora (mesma base, mesma alíquota)', () => {
       const porFora = calcIcms({ valorProduto: '1000', aliquota: '0.18' })
-      const porDentro = calcIcms({ valorProduto: '1000', aliquota: '0.18', incluirImpostoNaBase: true })
+      const porDentro = calcIcms({
+        valorProduto: '1000',
+        aliquota: '0.18',
+        incluirImpostoNaBase: true,
+      })
       expect(porDentro.imposto.gt(porFora.imposto)).toBe(true)
     })
 

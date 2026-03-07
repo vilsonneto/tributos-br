@@ -81,7 +81,11 @@ describe('calcMvaAjustada', () => {
   })
 
   it('aceita number como input', () => {
-    const r = calcMvaAjustada({ mvaOriginal: 0.4, aliquotaInterestadual: 0.12, aliquotaInterna: 0.18 })
+    const r = calcMvaAjustada({
+      mvaOriginal: 0.4,
+      aliquotaInterestadual: 0.12,
+      aliquotaInterna: 0.18,
+    })
     expect(r.mvaAjustada.toRate().toString()).toBe('0.5024')
   })
 
