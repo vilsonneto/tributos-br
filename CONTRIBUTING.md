@@ -56,11 +56,25 @@ Se você está propondo uma correção ou nova fórmula:
 
 1. **Base legal obrigatória** — cite o Convênio ICMS, Lei Complementar, Portaria SEFAZ ou outro normativo que fundamenta a fórmula. Inclua no comentário do código.
 
-2. **Testes com valores reais** — use valores de NF-e reais (ou baseados em cenários reais), não valores inventados. Isso garante que a fórmula funciona na prática.
+2. **Testes derivados da lei, nunca da implementação** — escreva os testes a partir da tipagem da função e do normativo antes de olhar a implementação. O processo esperado é:
+   - Entender a regra pelo normativo.
+   - Escrever todos os testes.
+   - Implementar a função até os testes passarem.
 
-3. **Cobertura >= 95%** — a cobertura de testes deve ser mantida acima de 95% em statements, branches, functions e lines após sua mudança.
+   Se não consegue escrever os testes sem olhar a implementação, a regra não está clara o suficiente para ser implementada com segurança. Revise a regra primeiro.
 
-4. **Precisão decimal** — use a classe `Decimal` para todos os cálculos. Nunca use `number` do JavaScript para valores monetários ou alíquotas.
+3. **Ground truth são NF-e aceitas pela SEFAZ** — use valores de NF-e reais autorizadas ou exemplos numéricos de documentos oficiais da SEFAZ. A legislação é frequentemente ambígua sobre ordem de arredondamento intermediário; uma NF-e autorizada elimina essa ambiguidade. Inclua no comentário do teste a fonte do valor de referência.
+
+4. **Testes fiscais só mudam quando a lei muda** — nunca ajuste o valor esperado em um `expect` para corresponder ao output da função. Se um teste falha, há exatamente três causas:
+   - A regra foi mal entendida → pare, revise o normativo, corrija o teste.
+   - A função está incorreta → corrija a implementação.
+   - A lei admite duas interpretações legítimas → documente a escolha no código e, se for significativa, em um ADR.
+
+5. **Cobertura >= 95%** — necessária, mas não suficiente. O que importa é que os valores produzidos estão corretos segundo o normativo, não apenas que o código é exercitado. Mantenha cobertura acima de 95% em statements, branches, functions e lines após sua mudança.
+
+6. **Precisão decimal** — use a classe `Decimal` para todos os cálculos. Nunca use `number` do JavaScript para valores monetários ou alíquotas.
+
+Veja também: [ADR-002 — Estratégia de validação de cálculos fiscais](docs/adr/002-estrategia-de-validacao-fiscal.md)
 
 ## Checklist do PR
 
