@@ -1,5 +1,4 @@
 export type {
-  DecimalInput,
   ResultadoSimples,
   ResultadoSt,
   ResultadoDifal,
