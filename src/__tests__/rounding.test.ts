@@ -87,6 +87,15 @@ describe('rounding', () => {
     it('2.55 com 1 casa → 2.6 (> 0.5 exato)', () => {
       expect(r('2.55', 1, RoundingMode.HALF_EVEN)).toBe('2.6')
     })
+
+    it('1.6 → 2 (firstRemoved > 5, arredonda para cima diretamente)', () => {
+      // firstRemoved = 6 > 5 → return true, sem checar par/impar
+      expect(r('1.6', 0, RoundingMode.HALF_EVEN)).toBe('2')
+    })
+
+    it('1.4 → 1 (firstRemoved < 5, trunca diretamente)', () => {
+      expect(r('1.4', 0, RoundingMode.HALF_EVEN)).toBe('1')
+    })
   })
 
   describe('HALF_DOWN', () => {
@@ -196,6 +205,16 @@ describe('rounding', () => {
 
     it('valor exato não muda: 1.5 com 1 casa', () => {
       expect(r('1.5', 1, RoundingMode.HALF_UP)).toBe('1.5')
+    })
+
+    it('1.501 arredondado a 0 casas: firstRemoved=5 mas hasRemainder=true → arredonda para cima', () => {
+      // firstRemoved = '5', removedDigits = '501', hasRemainder = true (há dígitos após o 5)
+      // > 0.5 exato → arredonda para longe do zero = 2
+      expect(r('1.501', 0, RoundingMode.HALF_EVEN)).toBe('2')
+    })
+
+    it('-1.501 com HALF_EVEN → -2 (simetrico com positivo)', () => {
+      expect(r('-1.501', 0, RoundingMode.HALF_EVEN)).toBe('-2')
     })
 
     it('1.2345 com 2 casas — todos os modos', () => {

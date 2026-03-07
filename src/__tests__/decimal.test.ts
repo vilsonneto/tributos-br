@@ -20,9 +20,21 @@ describe('Decimal', () => {
       expect(b.toString()).toBe('1.23')
     })
 
-    it('aceita config customizada', () => {
+    it('aceita config customizada completa', () => {
       const d = Decimal.from('1', { precision: 10, rounding: RoundingMode.HALF_EVEN })
       expect(d.toString()).toBe('1')
+    })
+
+    it('aceita config com apenas precision — rounding usa padrao HALF_UP', () => {
+      // partial.rounding = undefined → ?? DEFAULT_CONFIG.rounding
+      const d = Decimal.from('1.555', { precision: 10 })
+      expect(d.round(2).toString()).toBe('1.56')
+    })
+
+    it('aceita config com apenas rounding — precision usa padrao', () => {
+      // partial.precision = undefined → ?? DEFAULT_CONFIG.precision
+      const d = Decimal.from('1.555', { rounding: RoundingMode.HALF_DOWN })
+      expect(d.round(2).toString()).toBe('1.55')
     })
 
     it('lanca erro para valor invalido', () => {
@@ -215,6 +227,10 @@ describe('Decimal', () => {
       expect(Decimal.min('1', '3', '2').toString()).toBe('1')
     })
 
+    it('min quando o menor nao eh o primeiro argumento', () => {
+      expect(Decimal.min('3', '1', '2').toString()).toBe('1')
+    })
+
     it('min com negativos', () => {
       expect(Decimal.min('-5', '-1', '-3').toString()).toBe('-5')
     })
@@ -250,6 +266,11 @@ describe('Decimal', () => {
 
     it('toFixed(0) remove decimais', () => {
       expect(Decimal.from('1.9').toFixed(0)).toBe('1')
+    })
+
+    it('toFixed(0) em inteiro sem ponto decimal', () => {
+      // str = '5', dotIdx = -1 → retorna str diretamente sem slice
+      expect(Decimal.from('5').toFixed(0)).toBe('5')
     })
 
     it('toFixed trunca sem arredondar', () => {
