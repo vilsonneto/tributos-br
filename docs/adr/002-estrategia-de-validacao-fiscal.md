@@ -68,14 +68,14 @@ O foco principal é a correção dos resultados. Cobertura é uma métrica de ap
 ## Formato esperado de um caso de teste fiscal
 
 ```ts
-it("calcula ICMS por dentro — NF-e modelo 55, operação interna SP, alíquota 18%", () => {
+it('calcula ICMS por dentro — NF-e modelo 55, operação interna SP, alíquota 18%', () => {
   // Fonte: Manual de Orientação do Contribuinte v7.0, Anexo I, exemplo 3.2
   // vProd = 1000.00, alíquota = 18% → BC = vProd / (1 - 0.18) = 1219.51 (HALF_UP, 2 casas)
   // vICMS = BC × 0.18 = 219.51
-  const resultado = calcICMS({ vProd: "1000.00", aliquota: "18" });
-  expect(resultado.vBC.toMoney()).toBe("1219.51");
-  expect(resultado.vICMS.toMoney()).toBe("219.51");
-});
+  const resultado = calcICMS({ vProd: '1000.00', aliquota: '18' })
+  expect(resultado.vBC.toMoney()).toBe('1219.51')
+  expect(resultado.vICMS.toMoney()).toBe('219.51')
+})
 ```
 
 O comentário deve indicar a fonte do valor de referência e explicitar a ordem de arredondamento quando ela for relevante para o resultado.

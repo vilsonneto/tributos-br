@@ -46,8 +46,19 @@ describe('calcSt', () => {
     })
 
     it('valorIpi undefined equivale a zero', () => {
-      const semIpi = calcSt({ baseIcms: '1000', aliquotaIcms: '0.12', mva: '0.40', aliquotaSt: '0.18' })
-      const comIpiZero = calcSt({ baseIcms: '1000', aliquotaIcms: '0.12', mva: '0.40', aliquotaSt: '0.18', valorIpi: '0' })
+      const semIpi = calcSt({
+        baseIcms: '1000',
+        aliquotaIcms: '0.12',
+        mva: '0.40',
+        aliquotaSt: '0.18',
+      })
+      const comIpiZero = calcSt({
+        baseIcms: '1000',
+        aliquotaIcms: '0.12',
+        mva: '0.40',
+        aliquotaSt: '0.18',
+        valorIpi: '0',
+      })
       expect(semIpi.baseSt.toString()).toBe(comIpiZero.baseSt.toString())
       expect(semIpi.icmsSt.toString()).toBe(comIpiZero.icmsSt.toString())
     })
