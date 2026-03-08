@@ -96,4 +96,23 @@ describe('calcIcms', () => {
       expect(r.imposto.toMoney().toString()).toBe('136.36')
     })
   })
+
+  describe('audit trail', () => {
+    it('por fora: 2 steps (Base ICMS + ICMS)', () => {
+      const r = calcIcms({ valorProduto: '1000', aliquota: '0.18' })
+      expect(r.audit).toHaveLength(2)
+      expect(r.audit[0].step).toBe('Base ICMS')
+      expect(r.audit[0].value).toBe('1000.00')
+      expect(r.audit[1].step).toBe('ICMS')
+      expect(r.audit[1].formula).toBe('1000.00 × 0.1800')
+      expect(r.audit[1].value).toBe('180.00')
+    })
+
+    it('por dentro: step mostra formula de divisao', () => {
+      const r = calcIcms({ valorProduto: '1000', aliquota: '0.18', incluirImpostoNaBase: true })
+      expect(r.audit).toHaveLength(2)
+      expect(r.audit[0].step).toBe('Base ICMS (por dentro)')
+      expect(r.audit[0].formula).toBe('1000.00 / (1 - 0.1800)')
+    })
+  })
 })

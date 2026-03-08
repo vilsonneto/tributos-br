@@ -1,5 +1,5 @@
 import { Decimal } from '../precision/index.js'
-import type { DecimalInput, ResultadoSt } from './types.js'
+import type { AuditStep, DecimalInput, ResultadoSt } from './types.js'
 
 export interface CalcStInput {
   /** Valor de referência para cálculo do ICMS próprio (normalmente vBC do item). */
@@ -58,6 +58,7 @@ export function calcSt(input: CalcStInput): ResultadoSt {
   const aliquotaSt = Decimal.from(input.aliquotaSt)
   const valorIpi = input.valorIpi != null ? Decimal.from(input.valorIpi) : Decimal.zero()
   const fecop = input.fecop != null ? Decimal.from(input.fecop) : Decimal.zero()
+  const audit: AuditStep[] = []
 
   // 1. Aplica redução na base do ICMS próprio, se houver
   const baseIcmsEfetiva =
@@ -65,18 +66,56 @@ export function calcSt(input: CalcStInput): ResultadoSt {
       ? baseIcmsDecimal.mul(Decimal.one().sub(Decimal.from(input.reducaoBase)))
       : baseIcmsDecimal
 
+  if (input.reducaoBase != null) {
+    audit.push({
+      step: 'Base ICMS (reduzida)',
+      formula: `${baseIcmsDecimal.toFixed(2)} × (1 - ${Decimal.from(input.reducaoBase).toFixed(4)})`,
+      value: baseIcmsEfetiva.toFixed(2),
+    })
+  } else {
+    audit.push({
+      step: 'Base ICMS',
+      formula: input.baseIcms.toString(),
+      value: baseIcmsEfetiva.toFixed(2),
+    })
+  }
+
   // 2. ICMS próprio
   const icmsProprio = baseIcmsEfetiva.mul(aliquotaIcms)
+  audit.push({
+    step: 'ICMS Próprio',
+    formula: `${baseIcmsEfetiva.toFixed(2)} × ${aliquotaIcms.toFixed(4)}`,
+    value: icmsProprio.toFixed(2),
+  })
 
   // 3. Base ST pela MVA: (baseIcms + IPI) × (1 + MVA)
   // Nota: usa baseIcms original (sem redução) para compor base ST
   const baseStMva = baseIcmsDecimal.add(valorIpi).mul(Decimal.one().add(mva))
+
+  if (valorIpi.gt(Decimal.zero())) {
+    audit.push({
+      step: 'Base ST (MVA + IPI)',
+      formula: `(${baseIcmsDecimal.toFixed(2)} + ${valorIpi.toFixed(2)}) × (1 + ${mva.toFixed(4)})`,
+      value: baseStMva.toFixed(2),
+    })
+  } else {
+    audit.push({
+      step: 'Base ST (MVA)',
+      formula: `${baseIcmsDecimal.toFixed(2)} × (1 + ${mva.toFixed(4)})`,
+      value: baseStMva.toFixed(2),
+    })
+  }
 
   // 4. Se pauta fiscal informada, base ST = MAX(baseStMva, pautaFiscal × quantidade)
   let baseSt: Decimal
   if (input.pautaFiscal != null && input.quantidade != null) {
     const basePauta = Decimal.from(input.pautaFiscal).mul(Decimal.from(input.quantidade))
     baseSt = Decimal.max(baseStMva, basePauta)
+    audit.push({
+      step: 'Base ST (pauta)',
+      formula: `MAX(${baseStMva.toFixed(2)}, ${Decimal.from(input.pautaFiscal).toFixed(2)} × ${Decimal.from(input.quantidade).toFixed(0)})`,
+      value: baseSt.toFixed(2),
+    })
   } else {
     baseSt = baseStMva
   }
@@ -87,11 +126,33 @@ export function calcSt(input: CalcStInput): ResultadoSt {
       ? baseSt.mul(Decimal.one().sub(Decimal.from(input.reducaoBaseSt)))
       : baseSt
 
+  if (input.reducaoBaseSt != null) {
+    audit.push({
+      step: 'Base ST Efetiva (reduzida)',
+      formula: `${baseSt.toFixed(2)} × (1 - ${Decimal.from(input.reducaoBaseSt).toFixed(4)})`,
+      value: baseStEfetiva.toFixed(2),
+    })
+  }
+
   // 6. Alíquota ST efetiva (inclui FECOP)
   const aliquotaStEfetiva = aliquotaSt.add(fecop)
 
+  if (input.fecop != null) {
+    audit.push({
+      step: 'ALQ ST Efetiva',
+      formula: `${aliquotaSt.toFixed(4)} + ${fecop.toFixed(4)} (FECOP)`,
+      value: aliquotaStEfetiva.toFixed(4),
+    })
+  }
+
   // 7. ICMS-ST = base ST efetiva × alíquota ST efetiva − ICMS próprio
-  const icmsSt = baseStEfetiva.mul(aliquotaStEfetiva).sub(icmsProprio)
+  const icmsStBruto = baseStEfetiva.mul(aliquotaStEfetiva)
+  const icmsSt = icmsStBruto.sub(icmsProprio)
+  audit.push({
+    step: 'ICMS-ST',
+    formula: `${baseStEfetiva.toFixed(2)} × ${aliquotaStEfetiva.toFixed(4)} - ${icmsProprio.toFixed(2)}`,
+    value: icmsSt.toFixed(2),
+  })
 
   return {
     baseIcms: baseIcmsEfetiva,
@@ -99,5 +160,6 @@ export function calcSt(input: CalcStInput): ResultadoSt {
     baseSt,
     icmsSt,
     mvaUtilizada: mva,
+    audit,
   }
 }

@@ -98,4 +98,33 @@ describe('calcMvaAjustada', () => {
     expect(r.mvaAjustada).toBeInstanceOf(Decimal)
     expect(r.mvaOriginal).toBeInstanceOf(Decimal)
   })
+
+  describe('audit trail', () => {
+    it('sem FECOP: 1 step (MVA Ajustada)', () => {
+      const r = calcMvaAjustada({
+        mvaOriginal: '0.40',
+        aliquotaInterestadual: '0.12',
+        aliquotaInterna: '0.18',
+      })
+      expect(r.audit).toHaveLength(1)
+      expect(r.audit[0].step).toBe('MVA Ajustada')
+      expect(r.audit[0].formula).toContain('0.4000')
+      expect(r.audit[0].formula).toContain('0.1200')
+      expect(r.audit[0].formula).toContain('0.1800')
+    })
+
+    it('com FECOP: 2 steps (ALQ Interna Efetiva + MVA Ajustada)', () => {
+      const r = calcMvaAjustada({
+        mvaOriginal: '0.40',
+        aliquotaInterestadual: '0.12',
+        aliquotaInterna: '0.17',
+        fecop: '0.02',
+      })
+      expect(r.audit).toHaveLength(2)
+      expect(r.audit[0].step).toBe('ALQ Interna Efetiva')
+      expect(r.audit[0].formula).toContain('FECOP')
+      expect(r.audit[0].value).toBe('0.1900')
+      expect(r.audit[1].step).toBe('MVA Ajustada')
+    })
+  })
 })

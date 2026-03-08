@@ -106,3 +106,25 @@ describe('calcIbs', () => {
     expect(r.aliquota).toBeInstanceOf(Decimal)
   })
 })
+
+describe('audit trail', () => {
+  it('calcCbs: 2 steps (Base CBS + CBS)', () => {
+    const r = calcCbs({ base: '1000', aliquota: '0.009' })
+    expect(r.audit).toHaveLength(2)
+    expect(r.audit[0].step).toBe('Base CBS')
+    expect(r.audit[0].value).toBe('1000.00')
+    expect(r.audit[1].step).toBe('CBS')
+    expect(r.audit[1].formula).toBe('1000.00 × 0.0090')
+    expect(r.audit[1].value).toBe('9.00')
+  })
+
+  it('calcIbs: 2 steps (Base IBS + IBS)', () => {
+    const r = calcIbs({ base: '1000', aliquota: '0.178' })
+    expect(r.audit).toHaveLength(2)
+    expect(r.audit[0].step).toBe('Base IBS')
+    expect(r.audit[0].value).toBe('1000.00')
+    expect(r.audit[1].step).toBe('IBS')
+    expect(r.audit[1].formula).toBe('1000.00 × 0.1780')
+    expect(r.audit[1].value).toBe('178.00')
+  })
+})

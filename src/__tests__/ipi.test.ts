@@ -64,4 +64,16 @@ describe('calcIpi', () => {
     expect(r.imposto).toBeInstanceOf(Decimal)
     expect(r.aliquota).toBeInstanceOf(Decimal)
   })
+
+  describe('audit trail', () => {
+    it('2 steps (Base IPI + IPI)', () => {
+      const r = calcIpi({ valorProduto: '1000', aliquota: '0.10' })
+      expect(r.audit).toHaveLength(2)
+      expect(r.audit[0].step).toBe('Base IPI')
+      expect(r.audit[0].value).toBe('1000.00')
+      expect(r.audit[1].step).toBe('IPI')
+      expect(r.audit[1].formula).toBe('1000.00 × 0.1000')
+      expect(r.audit[1].value).toBe('100.00')
+    })
+  })
 })

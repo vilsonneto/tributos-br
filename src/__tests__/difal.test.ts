@@ -154,4 +154,49 @@ describe('calcDifal', () => {
       expect(r.baseDifal).toBeInstanceOf(Decimal)
     })
   })
+
+  describe('audit trail', () => {
+    it('base unica sem FECOP: 4 steps', () => {
+      const r = calcDifal({
+        valorOperacao: '1000',
+        aliquotaInterestadual: '0.12',
+        aliquotaInternaDestino: '0.18',
+        destinatarioContribuinte: false,
+      })
+      expect(r.audit).toHaveLength(4)
+      expect(r.audit[0].step).toBe('ICMS Origem')
+      expect(r.audit[0].value).toBe('120.00')
+      expect(r.audit[1].step).toBe('Base DIFAL (única)')
+      expect(r.audit[1].value).toBe('1000.00')
+      expect(r.audit[2].step).toBe('ICMS Destino')
+      expect(r.audit[2].value).toBe('180.00')
+      expect(r.audit[3].step).toBe('DIFAL')
+      expect(r.audit[3].value).toBe('60.00')
+    })
+
+    it('base dupla: step mostra formula de divisao', () => {
+      const r = calcDifal({
+        valorOperacao: '1000',
+        aliquotaInterestadual: '0.12',
+        aliquotaInternaDestino: '0.18',
+        destinatarioContribuinte: true,
+      })
+      const baseStep = r.audit.find((s) => s.step === 'Base DIFAL (dupla)')
+      expect(baseStep).toBeDefined()
+      expect(baseStep!.formula).toContain('/')
+    })
+
+    it('com FECOP: step ALQ Interna Efetiva aparece primeiro', () => {
+      const r = calcDifal({
+        valorOperacao: '1000',
+        aliquotaInterestadual: '0.12',
+        aliquotaInternaDestino: '0.18',
+        destinatarioContribuinte: false,
+        fecop: '0.02',
+      })
+      expect(r.audit[0].step).toBe('ALQ Interna Efetiva')
+      expect(r.audit[0].value).toBe('0.2000')
+      expect(r.audit).toHaveLength(5)
+    })
+  })
 })

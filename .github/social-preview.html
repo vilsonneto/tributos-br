@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        width: 1280px;
+        height: 640px;
+        background: #1a1a2e;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', Consolas, monospace;
+        position: relative;
+        overflow: hidden;
+      }
+      body::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background:
+          radial-gradient(ellipse at 15% 50%, rgba(0, 156, 59, 0.12) 0%, transparent 50%),
+          radial-gradient(ellipse at 85% 30%, rgba(0, 39, 118, 0.1) 0%, transparent 50%);
+        pointer-events: none;
+      }
+      .logo {
+        font-size: 72px;
+        font-weight: 700;
+        color: #fff;
+        letter-spacing: -2px;
+        z-index: 1;
+        line-height: 1;
+      }
+      .logo .dash {
+        color: #64748b;
+      }
+      .logo .br {
+        color: #009c3b;
+      }
+      .fx {
+        color: #ffdf00;
+        font-weight: 400;
+        font-size: 48px;
+        opacity: 0.8;
+        margin-left: 12px;
+      }
+      .tagline {
+        font-family:
+          'Inter',
+          -apple-system,
+          sans-serif;
+        font-weight: 300;
+        font-size: 22px;
+        color: #94a3b8;
+        margin-top: 16px;
+        z-index: 1;
+      }
+      .tagline strong {
+        color: #e2e8f0;
+        font-weight: 600;
+      }
+      .badges {
+        display: flex;
+        gap: 10px;
+        margin-top: 28px;
+        z-index: 1;
+      }
+      .badge {
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+      .b-green {
+        background: rgba(0, 156, 59, 0.15);
+        color: #009c3b;
+        border: 1px solid rgba(0, 156, 59, 0.3);
+      }
+      .b-blue {
+        background: rgba(0, 39, 118, 0.15);
+        color: #6b8cff;
+        border: 1px solid rgba(0, 39, 118, 0.3);
+      }
+      .b-yellow {
+        background: rgba(255, 223, 0, 0.1);
+        color: #ffdf00;
+        border: 1px solid rgba(255, 223, 0, 0.2);
+      }
+      .desc {
+        font-family:
+          'Inter',
+          -apple-system,
+          sans-serif;
+        font-size: 16px;
+        color: #64748b;
+        margin-top: 20px;
+        z-index: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="logo">
+      tributos<span class="dash">-</span><span class="br">br</span><span class="fx">f(x)</span>
+    </div>
+    <div class="tagline"><strong>Correto, testado, sem surpresas.</strong></div>
+    <div class="desc">Motor de calculo tributario brasileiro com precisao decimal arbitraria</div>
+    <div class="badges">
+      <span class="badge b-green">zero deps</span>
+      <span class="badge b-green">95%+ coverage</span>
+      <span class="badge b-blue">TypeScript strict</span>
+      <span class="badge b-blue">Node 20/22/24</span>
+      <span class="badge b-yellow">HALF_UP (SEFAZ)</span>
+    </div>
+  </body>
+</html>

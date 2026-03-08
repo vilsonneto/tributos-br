@@ -1,5 +1,5 @@
 import { Decimal } from '../precision/index.js'
-import type { DecimalInput, ResultadoSimples } from './types.js'
+import type { AuditStep, DecimalInput, ResultadoSimples } from './types.js'
 
 export interface CalcIpiInput {
   valorProduto: DecimalInput
@@ -22,5 +22,14 @@ export function calcIpi(input: CalcIpiInput): ResultadoSimples {
   const aliquota = Decimal.from(input.aliquota)
   const imposto = base.mul(aliquota)
 
-  return { imposto, base, aliquota }
+  const audit: AuditStep[] = [
+    { step: 'Base IPI', formula: input.valorProduto.toString(), value: base.toFixed(2) },
+    {
+      step: 'IPI',
+      formula: `${base.toFixed(2)} × ${aliquota.toFixed(4)}`,
+      value: imposto.toFixed(2),
+    },
+  ]
+
+  return { imposto, base, aliquota, audit }
 }

@@ -1,5 +1,5 @@
 import { Decimal } from '../precision/index.js'
-import type { DecimalInput, ResultadoSimples } from './types.js'
+import type { AuditStep, DecimalInput, ResultadoSimples } from './types.js'
 
 export interface CalcIcmsInput {
   valorProduto: DecimalInput
@@ -36,13 +36,31 @@ export interface CalcIcmsInput {
 export function calcIcms(input: CalcIcmsInput): ResultadoSimples {
   const aliquota = Decimal.from(input.aliquota)
   let base = Decimal.from(input.valorProduto)
+  const audit: AuditStep[] = []
 
   if (input.incluirImpostoNaBase === true) {
-    // base = valorProduto ÷ (1 − aliquota)
-    base = base.div(Decimal.one().sub(aliquota))
+    const complemento = Decimal.one().sub(aliquota)
+    const baseOriginal = base
+    base = base.div(complemento)
+    audit.push({
+      step: 'Base ICMS (por dentro)',
+      formula: `${baseOriginal.toFixed(2)} / (1 - ${aliquota.toFixed(4)})`,
+      value: base.toFixed(2),
+    })
+  } else {
+    audit.push({
+      step: 'Base ICMS',
+      formula: input.valorProduto.toString(),
+      value: base.toFixed(2),
+    })
   }
 
   const imposto = base.mul(aliquota)
+  audit.push({
+    step: 'ICMS',
+    formula: `${base.toFixed(2)} × ${aliquota.toFixed(4)}`,
+    value: imposto.toFixed(2),
+  })
 
-  return { imposto, base, aliquota }
+  return { imposto, base, aliquota, audit }
 }
