@@ -194,4 +194,90 @@ describe('calcSt', () => {
       expect(r.mvaUtilizada).toBeInstanceOf(Decimal)
     })
   })
+
+  describe('audit trail', () => {
+    it('caso base: 4 steps (Base ICMS, ICMS Proprio, Base ST, ICMS-ST)', () => {
+      const r = calcSt({
+        baseIcms: '1000',
+        aliquotaIcms: '0.12',
+        mva: '0.40',
+        aliquotaSt: '0.18',
+      })
+      expect(r.audit).toHaveLength(4)
+      expect(r.audit[0].step).toBe('Base ICMS')
+      expect(r.audit[0].value).toBe('1000.00')
+      expect(r.audit[1].step).toBe('ICMS Próprio')
+      expect(r.audit[1].value).toBe('120.00')
+      expect(r.audit[2].step).toBe('Base ST (MVA)')
+      expect(r.audit[2].value).toBe('1400.00')
+      expect(r.audit[3].step).toBe('ICMS-ST')
+      expect(r.audit[3].value).toBe('132.00')
+    })
+
+    it('com IPI: step Base ST mostra IPI na formula', () => {
+      const r = calcSt({
+        baseIcms: '1000',
+        aliquotaIcms: '0.12',
+        mva: '0.40',
+        aliquotaSt: '0.18',
+        valorIpi: '100',
+      })
+      const baseSt = r.audit.find((s) => s.step === 'Base ST (MVA + IPI)')
+      expect(baseSt).toBeDefined()
+      expect(baseSt!.formula).toContain('100.00')
+      expect(baseSt!.value).toBe('1540.00')
+    })
+
+    it('com reducaoBase: step mostra base reduzida', () => {
+      const r = calcSt({
+        baseIcms: '1000',
+        aliquotaIcms: '0.12',
+        mva: '0.40',
+        aliquotaSt: '0.18',
+        reducaoBase: '0.10',
+      })
+      expect(r.audit[0].step).toBe('Base ICMS (reduzida)')
+      expect(r.audit[0].value).toBe('900.00')
+    })
+
+    it('com pauta fiscal: step adicional Base ST (pauta)', () => {
+      const r = calcSt({
+        baseIcms: '1000',
+        aliquotaIcms: '0.12',
+        mva: '0.40',
+        aliquotaSt: '0.18',
+        pautaFiscal: '200',
+        quantidade: '10',
+      })
+      const pauta = r.audit.find((s) => s.step === 'Base ST (pauta)')
+      expect(pauta).toBeDefined()
+      expect(pauta!.formula).toContain('MAX')
+      expect(pauta!.value).toBe('2000.00')
+    })
+
+    it('com FECOP: step ALQ ST Efetiva aparece', () => {
+      const r = calcSt({
+        baseIcms: '1000',
+        aliquotaIcms: '0.12',
+        mva: '0.40',
+        aliquotaSt: '0.18',
+        fecop: '0.02',
+      })
+      const alqSt = r.audit.find((s) => s.step === 'ALQ ST Efetiva')
+      expect(alqSt).toBeDefined()
+      expect(alqSt!.value).toBe('0.2000')
+    })
+
+    it('com reducaoBaseSt: step Base ST Efetiva aparece', () => {
+      const r = calcSt({
+        baseIcms: '1000',
+        aliquotaIcms: '0.12',
+        mva: '0.40',
+        aliquotaSt: '0.18',
+        reducaoBaseSt: '0.10',
+      })
+      const baseEfetiva = r.audit.find((s) => s.step === 'Base ST Efetiva (reduzida)')
+      expect(baseEfetiva).toBeDefined()
+    })
+  })
 })

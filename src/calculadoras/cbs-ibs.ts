@@ -1,5 +1,5 @@
 import { Decimal } from '../precision/index.js'
-import type { DecimalInput, ResultadoSimples } from './types.js'
+import type { AuditStep, DecimalInput, ResultadoSimples } from './types.js'
 
 export interface CalcCbsInput {
   /** Base de cálculo da CBS. */
@@ -39,7 +39,16 @@ export function calcCbs(input: CalcCbsInput): ResultadoSimples {
   const aliquota = Decimal.from(input.aliquota)
   const imposto = base.mul(aliquota)
 
-  return { imposto, base, aliquota }
+  const audit: AuditStep[] = [
+    { step: 'Base CBS', formula: input.base.toString(), value: base.toFixed(2) },
+    {
+      step: 'CBS',
+      formula: `${base.toFixed(2)} × ${aliquota.toFixed(4)}`,
+      value: imposto.toFixed(2),
+    },
+  ]
+
+  return { imposto, base, aliquota, audit }
 }
 
 /**
@@ -58,5 +67,14 @@ export function calcIbs(input: CalcIbsInput): ResultadoSimples {
   const aliquota = Decimal.from(input.aliquota)
   const imposto = base.mul(aliquota)
 
-  return { imposto, base, aliquota }
+  const audit: AuditStep[] = [
+    { step: 'Base IBS', formula: input.base.toString(), value: base.toFixed(2) },
+    {
+      step: 'IBS',
+      formula: `${base.toFixed(2)} × ${aliquota.toFixed(4)}`,
+      value: imposto.toFixed(2),
+    },
+  ]
+
+  return { imposto, base, aliquota, audit }
 }

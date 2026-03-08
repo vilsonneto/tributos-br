@@ -1,4 +1,10 @@
-export type { ResultadoSimples, ResultadoSt, ResultadoDifal, ResultadoMva } from './types.js'
+export type {
+  AuditStep,
+  ResultadoSimples,
+  ResultadoSt,
+  ResultadoDifal,
+  ResultadoMva,
+} from './types.js'
 
 export type { CalcIcmsInput } from './icms.js'
 export { calcIcms } from './icms.js'

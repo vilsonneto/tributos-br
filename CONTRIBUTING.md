@@ -4,7 +4,7 @@ Obrigado por considerar contribuir! Este guia explica como configurar o ambiente
 
 ## Pré-requisitos
 
-- Node.js 22+ (recomendado) ou no mínimo Node 18
+- Node.js 22+ (recomendado) ou no mínimo Node 20
 - npm 10+
 - nvm (opcional, mas recomendado)
 
@@ -75,6 +75,25 @@ Se você está propondo uma correção ou nova fórmula:
 6. **Precisão decimal** — use a classe `Decimal` para todos os cálculos. Nunca use `number` do JavaScript para valores monetários ou alíquotas.
 
 Veja também: [ADR-002 — Estratégia de validação de cálculos fiscais](docs/adr/002-estrategia-de-validacao-fiscal.md)
+
+## Branches
+
+Usamos GitHub Flow: feature branches direto da `main`, sempre via Pull Request.
+
+| Prefixo   | Uso                       | Exemplo                       |
+| --------- | ------------------------- | ----------------------------- |
+| `feat/*`  | Nova funcionalidade       | `feat/calc-transicao`         |
+| `fix/*`   | Correção de bug           | `fix/arredondamento-difal`    |
+| `chore/*` | Infra, CI, dependências   | `chore/atualizar-node-matrix` |
+| `docs/*`  | Documentação              | `docs/exemplos-st`            |
+| `test/*`  | Testes sem mudança de API | `test/cenarios-fecop`         |
+
+Regras:
+
+- Sempre crie branch a partir de `main`
+- Sempre abra PR para mergear na `main`
+- CI deve estar verde antes do merge
+- PRs que alteram a API pública precisam de changeset
 
 ## Checklist do PR
 

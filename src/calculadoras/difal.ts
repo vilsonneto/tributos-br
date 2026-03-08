@@ -1,5 +1,5 @@
 import { Decimal } from '../precision/index.js'
-import type { DecimalInput, ResultadoDifal } from './types.js'
+import type { AuditStep, DecimalInput, ResultadoDifal } from './types.js'
 
 export interface CalcDifalInput {
   /** Valor da operação (base de referência para ICMS de origem). */
@@ -58,9 +58,24 @@ export function calcDifal(input: CalcDifalInput): ResultadoDifal {
   const aliquotaInterestadual = Decimal.from(input.aliquotaInterestadual)
   const aliquotaInterna = Decimal.from(input.aliquotaInternaDestino)
   const fecop = input.fecop != null ? Decimal.from(input.fecop) : Decimal.zero()
+  const audit: AuditStep[] = []
 
   const aliquotaInternaEfetiva = aliquotaInterna.add(fecop)
+
+  if (input.fecop != null) {
+    audit.push({
+      step: 'ALQ Interna Efetiva',
+      formula: `${aliquotaInterna.toFixed(4)} + ${fecop.toFixed(4)} (FECOP)`,
+      value: aliquotaInternaEfetiva.toFixed(4),
+    })
+  }
+
   const icmsOrigem = valorOperacao.mul(aliquotaInterestadual)
+  audit.push({
+    step: 'ICMS Origem',
+    formula: `${valorOperacao.toFixed(2)} × ${aliquotaInterestadual.toFixed(4)}`,
+    value: icmsOrigem.toFixed(2),
+  })
 
   let baseDifal: Decimal
   let icmsDestino: Decimal
@@ -68,14 +83,35 @@ export function calcDifal(input: CalcDifalInput): ResultadoDifal {
   if (input.destinatarioContribuinte) {
     // Base dupla (LC 190/2022)
     baseDifal = valorOperacao.sub(icmsOrigem).div(Decimal.one().sub(aliquotaInternaEfetiva))
+    audit.push({
+      step: 'Base DIFAL (dupla)',
+      formula: `(${valorOperacao.toFixed(2)} - ${icmsOrigem.toFixed(2)}) / (1 - ${aliquotaInternaEfetiva.toFixed(4)})`,
+      value: baseDifal.toFixed(2),
+    })
     icmsDestino = baseDifal.mul(aliquotaInternaEfetiva)
   } else {
     // Base única
     baseDifal = valorOperacao
+    audit.push({
+      step: 'Base DIFAL (única)',
+      formula: valorOperacao.toFixed(2),
+      value: baseDifal.toFixed(2),
+    })
     icmsDestino = baseDifal.mul(aliquotaInternaEfetiva)
   }
 
-  const difal = icmsDestino.sub(icmsOrigem)
+  audit.push({
+    step: 'ICMS Destino',
+    formula: `${baseDifal.toFixed(2)} × ${aliquotaInternaEfetiva.toFixed(4)}`,
+    value: icmsDestino.toFixed(2),
+  })
 
-  return { difal, icmsOrigem, icmsDestino, baseDifal }
+  const difal = icmsDestino.sub(icmsOrigem)
+  audit.push({
+    step: 'DIFAL',
+    formula: `${icmsDestino.toFixed(2)} - ${icmsOrigem.toFixed(2)}`,
+    value: difal.toFixed(2),
+  })
+
+  return { difal, icmsOrigem, icmsDestino, baseDifal, audit }
 }

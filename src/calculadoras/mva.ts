@@ -1,5 +1,5 @@
 import { Decimal } from '../precision/index.js'
-import type { DecimalInput, ResultadoMva } from './types.js'
+import type { AuditStep, DecimalInput, ResultadoMva } from './types.js'
 
 export interface CalcMvaAjustadaInput {
   /** MVA original do protocolo/convênio ICMS. Ex: 0.40 para 40%. */
@@ -43,8 +43,17 @@ export function calcMvaAjustada(input: CalcMvaAjustadaInput): ResultadoMva {
   const aliquotaInterestadual = Decimal.from(input.aliquotaInterestadual)
   const aliquotaInterna = Decimal.from(input.aliquotaInterna)
   const fecop = input.fecop != null ? Decimal.from(input.fecop) : Decimal.zero()
+  const audit: AuditStep[] = []
 
   const aliqInternaEfetiva = aliquotaInterna.add(fecop)
+
+  if (input.fecop != null) {
+    audit.push({
+      step: 'ALQ Interna Efetiva',
+      formula: `${aliquotaInterna.toFixed(4)} + ${fecop.toFixed(4)} (FECOP)`,
+      value: aliqInternaEfetiva.toFixed(4),
+    })
+  }
 
   // ((1 + mvaOriginal) × (1 − aliquotaInterestadual)) ÷ (1 − aliqInternaEfetiva) − 1
   const numerador = Decimal.one()
@@ -53,5 +62,11 @@ export function calcMvaAjustada(input: CalcMvaAjustadaInput): ResultadoMva {
   const denominador = Decimal.one().sub(aliqInternaEfetiva)
   const mvaAjustada = numerador.div(denominador).sub(Decimal.one())
 
-  return { mvaAjustada, mvaOriginal: mvaOriginalDecimal }
+  audit.push({
+    step: 'MVA Ajustada',
+    formula: `((1 + ${mvaOriginalDecimal.toFixed(4)}) × (1 - ${aliquotaInterestadual.toFixed(4)})) / (1 - ${aliqInternaEfetiva.toFixed(4)}) - 1`,
+    value: mvaAjustada.toFixed(4),
+  })
+
+  return { mvaAjustada, mvaOriginal: mvaOriginalDecimal, audit }
 }
