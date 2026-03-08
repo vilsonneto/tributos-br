@@ -97,15 +97,15 @@ Todas as funções recebem e retornam valores como `Decimal`, nunca `number`. Us
 
 ## Funções disponíveis
 
-| Função              | Descrição                                      |
-| ------------------- | ---------------------------------------------- |
-| `calcIcms()`        | ICMS próprio (por dentro / por fora)           |
-| `calcIpi()`         | IPI sobre produto                              |
-| `calcMvaAjustada()` | MVA ajustada interestadual (com FECOP)         |
-| `calcSt()`          | ICMS-ST unificada (5 cenários via parâmetros)  |
-| `calcDifal()`       | DIFAL base única + base dupla (LC 190/2022)    |
-| `calcCbs()`         | CBS (reforma tributária, LC 214/2025)          |
-| `calcIbs()`         | IBS (reforma tributária, LC 214/2025)          |
+| Função              | Descrição                                     |
+| ------------------- | --------------------------------------------- |
+| `calcIcms()`        | ICMS próprio (por dentro / por fora)          |
+| `calcIpi()`         | IPI sobre produto                             |
+| `calcMvaAjustada()` | MVA ajustada interestadual (com FECOP)        |
+| `calcSt()`          | ICMS-ST unificada (5 cenários via parâmetros) |
+| `calcDifal()`       | DIFAL base única + base dupla (LC 190/2022)   |
+| `calcCbs()`         | CBS (reforma tributária, LC 214/2025)         |
+| `calcIbs()`         | IBS (reforma tributária, LC 214/2025)         |
 
 Todas as funções são puras, recebem parâmetros (nunca hardcode de alíquotas), retornam objeto com breakdown dos cálculos + audit trail, e usam `Decimal` internamente com arredondamento HALF_UP (padrão SEFAZ).
 
