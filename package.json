@@ -65,6 +65,7 @@
     "@vitest/coverage-v8": "^4.0.18",
     "eslint": "^10.0.2",
     "eslint-config-prettier": "^10.1.8",
+    "jiti": "^2.6.1",
     "prettier": "^3.8.1",
     "tsup": "^8.0.0",
     "typescript": "^5.7.0",
