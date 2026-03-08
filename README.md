@@ -1,10 +1,14 @@
 <p align="center">
-  <img src=".github/logo.svg" width="420" alt="tributos-br f(x)">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/logo-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset=".github/logo-light.svg">
+    <img src=".github/logo-light.svg" width="420" alt="tributos-br f(x)">
+  </picture>
 </p>
 
 <p align="center">
   <strong>Correto, testado, sem surpresas.</strong><br>
-  Motor de calculo tributario brasileiro com precisao decimal arbitraria. Zero dependencias.
+  Motor de cálculo tributário brasileiro com precisão decimal arbitrária. Zero dependências.
 </p>
 
 <p align="center">
@@ -19,19 +23,19 @@
 
 ## Por que tributos-br?
 
-1. **Audit trail em cada calculo** — quando a SEFAZ rejeita, voce sabe exatamente onde o arredondamento causou a divergencia. Cada funcao retorna um array de steps com formula e valor de cada etapa.
+1. **Audit trail em cada cálculo** — quando a SEFAZ rejeita, você sabe exatamente onde o arredondamento causou a divergência. Cada função retorna um array de steps com fórmula e valor de cada etapa.
 
-2. **DIFAL base dupla (LC 190/2022)** — a maioria dos ERPs menores calcula DIFAL apenas com base unica. tributos-br implementa ambos os metodos e seleciona via parametro.
+2. **DIFAL base dupla (LC 190/2022)** — a maioria dos ERPs menores calcula DIFAL apenas com base única. tributos-br implementa ambos os métodos e seleciona via parâmetro.
 
-3. **FECOP na MVA Ajustada** — ALQ Intra Efetiva = ALQ Interna + FECOP. Ignorar FECOP gera diferenca de ~4pp na MVA. Estados: RJ, MG, CE, PE, BA, GO, MT, PI.
+3. **FECOP na MVA Ajustada** — ALQ Intra Efetiva = ALQ Interna + FECOP. Ignorar FECOP gera diferença de ~4pp na MVA. Estados: RJ, MG, CE, PE, BA, GO, MT, PI.
 
-4. **ST unificada** — uma unica `calcSt()` cobre todos os 5 cenarios de Substituicao Tributaria via parametros opcionais. Sem nomenclatura ST-01 a ST-05.
+4. **ST unificada** — uma única `calcSt()` cobre todos os 5 cenários de Substituição Tributária via parâmetros opcionais. Sem nomenclatura ST-01 a ST-05.
 
 ---
 
 ## O problema
 
-JavaScript usa IEEE 754 (ponto flutuante) para numeros. Isso causa erros silenciosos em calculos fiscais:
+JavaScript usa IEEE 754 (ponto flutuante) para números. Isso causa erros silenciosos em cálculos fiscais:
 
 ```js
 1.064 * 39680
@@ -39,13 +43,13 @@ JavaScript usa IEEE 754 (ponto flutuante) para numeros. Isso causa erros silenci
 // IEEE 754: 42219.520000000004
 ```
 
-A SEFAZ rejeita NF-e com erros de validacao 629/630 quando `vProd != vUnCom x qCom`. Esse drift de centavos eh causado por arredondamento IEEE 754.
+A SEFAZ rejeita NF-e com erros de validação 629/630 quando `vProd != vUnCom x qCom`. Esse drift de centavos é causado por arredondamento IEEE 754.
 
-O `tributos-br` resolve isso com aritmetica em strings de precisao arbitraria. Toda operacao eh feita sobre digitos decimais puros, sem conversao para `number` em nenhum ponto intermediario.
+O `tributos-br` resolve isso com aritmética em strings de precisão arbitrária. Toda operação é feita sobre dígitos decimais puros, sem conversão para `number` em nenhum ponto intermediário.
 
 ---
 
-## Instalacao
+## Instalação
 
 ```bash
 npm install tributos-br
@@ -61,7 +65,7 @@ pnpm add tributos-br
 
 ---
 
-## Uso rapido
+## Uso rápido
 
 ```ts
 import { calcSt } from 'tributos-br'
@@ -77,44 +81,44 @@ const resultado = calcSt({
 resultado.icmsSt.toFixed(2) // '157.20'
 resultado.baseSt.toFixed(2) // '1540.00'
 
-// Audit trail — cada etapa do calculo
+// Audit trail — cada etapa do cálculo
 resultado.audit
 // [
 //   { step: "Base ICMS",            formula: "1000",                        value: "1000.00" },
-//   { step: "ICMS Proprio",         formula: "1000.00 x 0.1200",            value: "120.00"  },
+//   { step: "ICMS Próprio",         formula: "1000.00 x 0.1200",            value: "120.00"  },
 //   { step: "Base ST (MVA + IPI)",  formula: "(1000.00 + 100.00) x 1.4000", value: "1540.00" },
 //   { step: "ICMS-ST",             formula: "1540.00 x 0.1800 - 120.00",   value: "157.20"  },
 // ]
 ```
 
-Todas as funcoes recebem e retornam valores como `Decimal`, nunca `number`. Use `.toFixed(2)` para formatar e `.toNumber()` apenas para interoperabilidade com APIs externas.
+Todas as funções recebem e retornam valores como `Decimal`, nunca `number`. Use `.toFixed(2)` para formatar e `.toNumber()` apenas para interoperabilidade com APIs externas.
 
 ---
 
-## Funcoes disponiveis
+## Funções disponíveis
 
-| Funcao              | Descricao                                     |
-| ------------------- | --------------------------------------------- |
-| `calcIcms()`        | ICMS proprio (por dentro / por fora)          |
-| `calcIpi()`         | IPI sobre produto                             |
-| `calcMvaAjustada()` | MVA ajustada interestadual (com FECOP)        |
-| `calcSt()`          | ICMS-ST unificada (5 cenarios via parametros) |
-| `calcDifal()`       | DIFAL base unica + base dupla (LC 190/2022)   |
-| `calcCbs()`         | CBS (reforma tributaria, LC 214/2025)         |
-| `calcIbs()`         | IBS (reforma tributaria, LC 214/2025)         |
+| Função              | Descrição                                      |
+| ------------------- | ---------------------------------------------- |
+| `calcIcms()`        | ICMS próprio (por dentro / por fora)           |
+| `calcIpi()`         | IPI sobre produto                              |
+| `calcMvaAjustada()` | MVA ajustada interestadual (com FECOP)         |
+| `calcSt()`          | ICMS-ST unificada (5 cenários via parâmetros)  |
+| `calcDifal()`       | DIFAL base única + base dupla (LC 190/2022)    |
+| `calcCbs()`         | CBS (reforma tributária, LC 214/2025)          |
+| `calcIbs()`         | IBS (reforma tributária, LC 214/2025)          |
 
-Todas as funcoes sao puras, recebem parametros (nunca hardcode de aliquotas), retornam objeto com breakdown dos calculos + audit trail, e usam `Decimal` internamente com arredondamento HALF_UP (padrao SEFAZ).
+Todas as funções são puras, recebem parâmetros (nunca hardcode de alíquotas), retornam objeto com breakdown dos cálculos + audit trail, e usam `Decimal` internamente com arredondamento HALF_UP (padrão SEFAZ).
 
 ---
 
 ## Exemplos
 
-### ICMS proprio
+### ICMS próprio
 
 ```ts
 import { calcIcms } from 'tributos-br'
 
-// ICMS por fora (padrao, operacoes interestaduais)
+// ICMS por fora (padrão, operações interestaduais)
 const icms = calcIcms({
   valorProduto: '1000',
   aliquota: '0.18', // 18%
@@ -122,7 +126,7 @@ const icms = calcIcms({
 // icms.base    → 1000
 // icms.imposto → 180
 
-// ICMS por dentro (operacoes internas, imposto embutido no preco)
+// ICMS por dentro (operações internas, imposto embutido no preço)
 const icmsDentro = calcIcms({
   valorProduto: '1000',
   aliquota: '0.18',
@@ -147,7 +151,7 @@ const ipi = calcIpi({
 
 ### MVA ajustada
 
-Corrige a MVA original para operacoes interestaduais, neutralizando o diferencial de aliquota (EC 87/2015).
+Corrige a MVA original para operações interestaduais, neutralizando o diferencial de alíquota (EC 87/2015).
 
 ```ts
 import { calcMvaAjustada } from 'tributos-br'
@@ -170,14 +174,14 @@ const mvaFecop = calcMvaAjustada({
 // mvaFecop.mvaAjustada → 0.54 (54%)
 ```
 
-### ICMS-ST (Substituicao Tributaria)
+### ICMS-ST (Substituição Tributária)
 
-Uma unica funcao que cobre todos os cenarios via parametros opcionais:
+Uma única função que cobre todos os cenários via parâmetros opcionais:
 
 ```ts
 import { calcSt } from 'tributos-br'
 
-// Cenario basico: operacao interna com MVA original
+// Cenário básico: operação interna com MVA original
 const st = calcSt({
   baseIcms: '1000',
   aliquotaIcms: '0.18', // 18%
@@ -189,7 +193,7 @@ const st = calcSt({
 // st.baseSt      → 1400 (1000 x 1.40)
 // st.icmsSt      → 72   (1400 x 0.18 - 180)
 
-// Cenario interestadual com IPI compondo base ST
+// Cenário interestadual com IPI compondo base ST
 const stInter = calcSt({
   baseIcms: '1000',
   aliquotaIcms: '0.12',
@@ -200,7 +204,7 @@ const stInter = calcSt({
 // stInter.baseSt → 1652.64 ((1000 + 100) x 1.5024)
 // stInter.icmsSt → 177.47
 
-// Cenario com pauta fiscal (SEFAZ define valor minimo)
+// Cenário com pauta fiscal (SEFAZ define valor mínimo)
 const stPauta = calcSt({
   baseIcms: '500',
   aliquotaIcms: '0.12',
@@ -212,7 +216,7 @@ const stPauta = calcSt({
 // Se pauta (15 x 100 = 1500) > base MVA (500 x 1.40 = 700), usa pauta
 // stPauta.baseSt → 1500
 
-// Cenario com reducao de base
+// Cenário com redução de base
 const stReduzida = calcSt({
   baseIcms: '1000',
   aliquotaIcms: '0.18',
@@ -222,26 +226,26 @@ const stReduzida = calcSt({
   reducaoBaseSt: '0.10', // reduz 10% da base ST
 })
 // stReduzida.baseIcms → 900 (1000 x 0.90)
-// stReduzida.baseSt   → 1400 (base ST antes da reducao)
+// stReduzida.baseSt   → 1400 (base ST antes da redução)
 // icmsSt calculado sobre base ST efetiva (1400 x 0.90 = 1260)
 
-// Cenario com FECOP
+// Cenário com FECOP
 const stFecop = calcSt({
   baseIcms: '1000',
   aliquotaIcms: '0.12',
   mva: '0.40',
   aliquotaSt: '0.18',
-  fecop: '0.02', // +2% sobre aliquota ST
+  fecop: '0.02', // +2% sobre alíquota ST
 })
-// Aliquota ST efetiva = 0.18 + 0.02 = 0.20
+// Alíquota ST efetiva = 0.18 + 0.02 = 0.20
 ```
 
-### DIFAL (Diferencial de Aliquota)
+### DIFAL (Diferencial de Alíquota)
 
 ```ts
 import { calcDifal } from 'tributos-br'
 
-// Base unica (nao-contribuinte, consumidor final)
+// Base única (não-contribuinte, consumidor final)
 const difalSimples = calcDifal({
   valorOperacao: '1000',
   aliquotaInterestadual: '0.12',
@@ -276,7 +280,7 @@ const difalFecop = calcDifal({
 // difalFecop.difal       → 80
 ```
 
-### CBS e IBS (Reforma Tributaria)
+### CBS e IBS (Reforma Tributária)
 
 ```ts
 import { calcCbs, calcIbs } from 'tributos-br'
@@ -284,7 +288,7 @@ import { calcCbs, calcIbs } from 'tributos-br'
 // CBS — substitui PIS/COFINS (LC 214/2025)
 const cbs = calcCbs({
   base: '1000',
-  aliquota: '0.009', // 0,9% (aliquota teste 2026)
+  aliquota: '0.009', // 0,9% (alíquota teste 2026)
 })
 // cbs.imposto → 9
 
@@ -296,32 +300,32 @@ const ibs = calcIbs({
 // ibs.imposto → 178
 ```
 
-As aliquotas nao sao hardcoded porque variam por setor e ano-calendario durante a transicao.
+As alíquotas não são hardcoded porque variam por setor e ano-calendário durante a transição.
 
 ---
 
-## Precisao Decimal
+## Precisão Decimal
 
-A lib inclui a classe `Decimal` para aritmetica de precisao arbitraria. Pode ser usada independentemente:
+A lib inclui a classe `Decimal` para aritmética de precisão arbitrária. Pode ser usada independentemente:
 
 ```ts
 import { Decimal, RoundingMode } from 'tributos-br/precision'
 
-// Criacao
+// Criação
 const a = Decimal.from('1.064')
 const b = Decimal.from('39680')
 
-// Operacoes (encadeamento imutavel)
+// Operações (encadeamento imutável)
 const resultado = a.mul(b).round(2)
 console.log(resultado.toFixed(2)) // '42219.52' (exato!)
 
-// Arredondamento monetario (2 casas, HALF_UP)
+// Arredondamento monetário (2 casas, HALF_UP)
 Decimal.from('1.235').toMoney().toFixed(2) // '1.24'
 
-// Arredondamento de aliquota (4 casas, HALF_UP)
+// Arredondamento de alíquota (4 casas, HALF_UP)
 Decimal.from('0.12345').toRate().toFixed(4) // '0.1235'
 
-// Comparacoes
+// Comparações
 Decimal.from('1.23').gt('1.22') // true
 Decimal.from('1.23').eq('1.23') // true
 
@@ -332,9 +336,9 @@ Decimal.min('100', '200', '150').toFixed(0) // '100'
 
 ### Modos de arredondamento
 
-| Modo        | Descricao                             |
+| Modo        | Descrição                             |
 | ----------- | ------------------------------------- |
-| `HALF_UP`   | Metade para cima (padrao SEFAZ)       |
+| `HALF_UP`   | Metade para cima (padrão SEFAZ)       |
 | `HALF_EVEN` | Metade para o par (Banker's rounding) |
 | `HALF_DOWN` | Metade para baixo                     |
 | `UP`        | Para longe do zero                    |
@@ -346,16 +350,16 @@ Decimal.min('100', '200', '150').toFixed(0) // '100'
 
 ## Entry points
 
-| Import                  | Conteudo                                               |
+| Import                  | Conteúdo                                               |
 | ----------------------- | ------------------------------------------------------ |
 | `tributos-br`           | Calculadoras (ICMS, IPI, DIFAL, ST, CBS/IBS) + Decimal |
 | `tributos-br/precision` | Apenas `Decimal` + `RoundingMode`                      |
 
 ```ts
-// Se voce so precisa de Decimal (sem calculadoras)
+// Se você só precisa de Decimal (sem calculadoras)
 import { Decimal } from 'tributos-br/precision'
 
-// Se precisa das calculadoras (Decimal tambem incluso)
+// Se precisa das calculadoras (Decimal também incluso)
 import { calcIcms, Decimal } from 'tributos-br'
 ```
 
@@ -369,14 +373,14 @@ import { calcIcms, Decimal } from 'tributos-br'
 
 ---
 
-## Motivacao
+## Motivação
 
-Essa lib nasceu de codigo de producao em um ERP de comercio. Ao migrar calculos tributarios de planilhas Excel para JavaScript, os arredondamentos IEEE 754 comecaram a causar rejeicoes de NF-e por centavos de diferenca.
+A motivação veio de experiência real com cálculo de ICMS e IPI em código de produção. Arredondamentos IEEE 754 causavam rejeições de NF-e por centavos de diferença — erro 629, valor total não bate com preço unitário vezes quantidade.
 
-Em vez de corrigir caso a caso com `toFixed`, a solucao foi trocar a base: fazer aritmetica em strings de digitos, sem nunca passar por `number` nos calculos intermediarios. O resultado eh uma engine de calculo tributario que produz os mesmos valores que a SEFAZ espera, sem surpresas.
+Em vez de corrigir caso a caso com `toFixed`, a solução foi trocar a base: fazer aritmética em strings de dígitos, sem nunca passar por `number` nos cálculos intermediários. O resultado é uma engine de cálculo tributário que produz os mesmos valores que a SEFAZ espera, sem surpresas.
 
 ---
 
-## Licenca
+## Licença
 
 [MIT](./LICENSE)
