@@ -80,13 +80,13 @@ Veja também: [ADR-002 — Estratégia de validação de cálculos fiscais](docs
 
 Usamos GitHub Flow: feature branches direto da `main`, sempre via Pull Request.
 
-| Prefixo    | Uso                       | Exemplo                           |
-| ---------- | ------------------------- | --------------------------------- |
-| `feat/*`   | Nova funcionalidade       | `feat/calc-transicao`             |
-| `fix/*`    | Correção de bug           | `fix/arredondamento-difal`        |
-| `chore/*`  | Infra, CI, dependências   | `chore/atualizar-node-matrix`     |
-| `docs/*`   | Documentação              | `docs/exemplos-st`                |
-| `test/*`   | Testes sem mudança de API | `test/cenarios-fecop`             |
+| Prefixo   | Uso                       | Exemplo                       |
+| --------- | ------------------------- | ----------------------------- |
+| `feat/*`  | Nova funcionalidade       | `feat/calc-transicao`         |
+| `fix/*`   | Correção de bug           | `fix/arredondamento-difal`    |
+| `chore/*` | Infra, CI, dependências   | `chore/atualizar-node-matrix` |
+| `docs/*`  | Documentação              | `docs/exemplos-st`            |
+| `test/*`  | Testes sem mudança de API | `test/cenarios-fecop`         |
 
 Regras:
 
