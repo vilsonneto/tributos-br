@@ -1,8 +1,8 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".github/logo-dark.svg">
-    <source media="(prefers-color-scheme: light)" srcset=".github/logo-light.svg">
-    <img src=".github/logo-light.svg" width="420" alt="tributos-br f(x)">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vilsonneto/tributos-br/main/.github/logo-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/vilsonneto/tributos-br/main/.github/logo-light.svg">
+    <img src="https://raw.githubusercontent.com/vilsonneto/tributos-br/main/.github/logo-light.svg" width="420" alt="tributos-br f(x)">
   </picture>
 </p>
 
