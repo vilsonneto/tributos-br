@@ -1,6 +1,6 @@
 {
   "name": "tributos-br",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Motor de cálculo tributário brasileiro com precisão decimal arbitrária",
   "license": "MIT",
   "author": {
