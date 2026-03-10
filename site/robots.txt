@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://vilsonneto.github.io/tributos-br/sitemap.xml
+Sitemap: https://tributos-br.vercel.app/sitemap.xml
