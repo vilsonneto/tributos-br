@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>tributos-br | Cálculo tributário brasileiro para JavaScript e TypeScript</title>
+<meta name="description" content="Motor de cálculo tributário com precisão decimal arbitrária. ICMS, IPI, ST, DIFAL, CBS/IBS. Zero dependências. Elimina rejeições SEFAZ 629/630.">
+<meta name="keywords" content="cálculo tributário, ICMS, IPI, DIFAL, substituição tributária, NF-e, SEFAZ, precisão decimal, JavaScript, TypeScript, npm, CBS, IBS, reforma tributária, Brasil, nota fiscal eletrônica, arredondamento, IEEE 754">
+<meta name="author" content="Vilson Padilha">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://vilsonneto.github.io/tributos-br/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="tributos-br | Cálculo tributário brasileiro para JS/TS">
+<meta property="og:description" content="Motor de cálculo tributário com precisão decimal arbitrária. ICMS, IPI, ST, DIFAL, CBS/IBS. Zero deps. Elimina rejeições SEFAZ 629/630.">
+<meta property="og:url" content="https://vilsonneto.github.io/tributos-br/">
+<meta property="og:site_name" content="tributos-br">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:image" content="https://vilsonneto.github.io/tributos-br/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="tributos-br f(x) — Motor de cálculo tributário brasileiro com precisão decimal arbitrária">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="tributos-br | Cálculo tributário brasileiro para JS/TS">
+<meta name="twitter:description" content="Motor de cálculo tributário com precisão decimal arbitrária. ICMS, IPI, ST, DIFAL, CBS/IBS. Zero deps. Elimina rejeições SEFAZ 629/630.">
+<meta name="twitter:image" content="https://vilsonneto.github.io/tributos-br/og-image.png">
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "tributos-br",
+  "alternateName": "tributos-br f(x)",
+  "description": "Motor de cálculo tributário brasileiro com precisão decimal arbitrária. ICMS, IPI, DIFAL, Substituição Tributária, CBS/IBS. Zero dependências.",
+  "programmingLanguage": ["TypeScript", "JavaScript"],
+  "runtimePlatform": "Node.js",
+  "codeRepository": "https://github.com/vilsonneto/tributos-br",
+  "license": "https://opensource.org/licenses/MIT",
+  "author": {
+    "@type": "Person",
+    "name": "Vilson Padilha",
+    "url": "https://github.com/vilsonneto"
+  },
+  "keywords": ["cálculo tributário", "ICMS", "IPI", "DIFAL", "ST", "SEFAZ", "NF-e", "precisão decimal", "CBS", "IBS"],
+  "applicationCategory": "DeveloperApplication",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "BRL"
+  }
+}
+</script>
+
+<!-- Favicon SVG -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231A1A2E'/%3E%3Ctext x='4' y='23' font-family='monospace' font-weight='700' font-size='18' fill='%23009C3B'%3Ebr%3C/text%3E%3C/svg%3E">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ─── RESET & TOKENS ─── */
+:root {
+  --verde: #009C3B;
+  --verde-dim: #007A2F;
+  --verde-glow: rgba(0,156,59,0.15);
+  --azul: #002776;
+  --amarelo: #FFDF00;
+  --carvao: #1A1A2E;
+  --carvao-deep: #0f172a;
+  --gelo: #F8F9FA;
+  --slate: #64748b;
+  --slate-light: #94a3b8;
+  --red: #E74C3C;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', Consolas, monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+body { font-family: var(--sans); background: var(--gelo); color: var(--carvao); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+
+/* ─── NAV ─── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(26,26,46,0.92); backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  transform: translateY(-100%); transition: transform 0.3s ease;
+}
+.nav.visible { transform: translateY(0); }
+.nav-inner {
+  max-width: 1080px; margin: 0 auto; padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px;
+}
+.nav-logo {
+  font-family: var(--mono); font-size: 16px; font-weight: 700;
+  color: #fff; text-decoration: none;
+}
+.nav-logo .br { color: var(--verde); }
+.nav-logo .fx { color: var(--amarelo); font-weight: 400; font-size: 12px; opacity: 0.7; margin-left: 4px; }
+.nav-links { display: flex; align-items: center; gap: 24px; }
+.nav-links a {
+  font-family: var(--mono); font-size: 11px; color: var(--slate-light);
+  text-decoration: none; letter-spacing: 0.5px; transition: color 0.2s;
+}
+.nav-links a:hover { color: #fff; }
+.nav-gh {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 6px;
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+  color: #fff !important; font-size: 11px !important; transition: background 0.2s;
+}
+.nav-gh:hover { background: rgba(255,255,255,0.14); }
+.nav-hamburger {
+  display: none; background: none; border: none; cursor: pointer;
+  padding: 4px; color: var(--slate-light); transition: color 0.2s;
+}
+.nav-hamburger:hover { color: #fff; }
+@media (max-width: 768px) {
+  .nav-hamburger { display: flex; align-items: center; }
+  .nav-links { display: none; position: absolute; top: 56px; right: 0; left: 0;
+    flex-direction: column; background: rgba(26,26,46,0.97); backdrop-filter: blur(12px);
+    padding: 16px 24px; gap: 16px; border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .nav-links.open { display: flex; }
+  .nav-links a:not(.nav-gh) { display: block; font-size: 13px; padding: 4px 0; }
+  .nav-gh { align-self: flex-start; }
+}
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh; display: flex; flex-direction: column;
+  justify-content: center; align-items: center; text-align: center;
+  padding: 80px 24px 60px; position: relative;
+  background: var(--carvao); overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 15% 50%, rgba(0,156,59,0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 30%, rgba(0,39,118,0.10) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(255,223,0,0.05) 0%, transparent 40%);
+  pointer-events: none;
+}
+.hero::after {
+  content: ''; position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23009C3B' fill-opacity='0.03'%3E%3Cpath d='M20 0v4h-4v2h4v4h2v-4h4V4h-4V0h-2zM0 20v4h4v-4H0zm36 0v4h4v-4h-4z'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+}
+.hero-content { position: relative; z-index: 1; }
+.hero-pre {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 4px;
+  text-transform: uppercase; color: var(--verde); margin-bottom: 28px;
+}
+.hero-logo { margin-bottom: 16px; display: inline-flex; align-items: center; }
+.hero-logo-text {
+  font-family: var(--mono); font-size: clamp(44px, 8vw, 88px);
+  font-weight: 700; color: #fff; letter-spacing: -2px; line-height: 1;
+}
+.hero-logo-text .br { color: var(--verde); }
+.hero-logo-text .dash { color: var(--slate); }
+.hero-fx {
+  font-family: var(--mono); font-size: clamp(18px, 3.5vw, 36px);
+  color: var(--amarelo); margin-left: 12px; font-weight: 400; opacity: 0.7;
+}
+.hero-tagline {
+  font-weight: 300; font-size: clamp(15px, 2.2vw, 22px);
+  color: var(--slate-light); margin-top: 8px;
+  max-width: 720px; line-height: 1.7; margin-left: auto; margin-right: auto;
+}
+.hero-tagline strong { color: #e2e8f0; font-weight: 600; }
+
+/* Hero Badges */
+.hero-badges {
+  margin-top: 32px;
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+}
+.hero-badge {
+  padding: 5px 12px; border-radius: 6px; font-family: var(--mono);
+  font-size: 11px; font-weight: 600; letter-spacing: 0.3px;
+}
+.hb-verde { background: rgba(0,156,59,0.12); color: var(--verde); border: 1px solid rgba(0,156,59,0.25); }
+.hb-azul { background: rgba(0,39,118,0.12); color: #6b8cff; border: 1px solid rgba(0,39,118,0.25); }
+.hb-amarelo { background: rgba(255,223,0,0.08); color: var(--amarelo); border: 1px solid rgba(255,223,0,0.18); }
+
+/* Hero CTAs */
+.hero-ctas { margin-top: 40px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+.cta-install {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 12px 24px; border-radius: 10px;
+  background: var(--verde); color: #fff;
+  font-family: var(--mono); font-size: 14px; font-weight: 600;
+  border: none; cursor: pointer; transition: all 0.2s;
+  text-decoration: none;
+}
+.cta-install:hover { background: var(--verde-dim); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,156,59,0.3); }
+.cta-install svg { flex-shrink: 0; }
+.cta-github {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 24px; border-radius: 10px;
+  background: transparent; color: #e2e8f0;
+  font-family: var(--mono); font-size: 14px; font-weight: 500;
+  border: 1px solid rgba(255,255,255,0.2); cursor: pointer;
+  text-decoration: none; transition: all 0.2s;
+}
+.cta-github:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.05); }
+.copied-toast {
+  position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--verde); color: #fff; padding: 10px 20px; border-radius: 8px;
+  font-family: var(--mono); font-size: 13px; font-weight: 600;
+  opacity: 0; transition: all 0.3s ease; pointer-events: none; z-index: 200;
+}
+.copied-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.scroll-hint {
+  position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+  font-family: var(--mono); font-size: 10px; color: var(--slate);
+  letter-spacing: 3px; text-transform: uppercase; z-index: 1;
+  animation: bob 2s ease-in-out infinite;
+}
+@keyframes bob { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(6px); } }
+
+/* ─── SECTIONS ─── */
+.section { max-width: 860px; margin: 0 auto; padding: 80px 24px; }
+.section-label {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--verde-dim); margin-bottom: 16px;
+}
+.section h2 {
+  font-size: clamp(26px, 4vw, 38px);
+  font-weight: 800; line-height: 1.2; margin-bottom: 20px; letter-spacing: -0.5px;
+}
+.section p { font-size: 15px; line-height: 1.8; color: #475569; margin-bottom: 16px; }
+.section p strong { color: var(--carvao); }
+
+/* ─── PROBLEM ─── */
+.problem-gate {
+  background: linear-gradient(135deg, #1a1a2e 0%, #0f172a 100%);
+  color: #e2e8f0; padding: 80px 24px;
+}
+.problem-inner { max-width: 860px; margin: 0 auto; }
+.problem-gate h2 { color: var(--red); font-size: clamp(26px, 4vw, 38px); font-weight: 800; margin-bottom: 24px; }
+.problem-code {
+  background: #0f172a; border: 1px solid #334155; border-radius: 12px;
+  padding: 24px 28px; margin: 24px 0; overflow-x: auto;
+}
+.problem-code pre {
+  font-family: var(--mono); font-size: 13px; line-height: 1.7; color: var(--slate-light);
+}
+.problem-code .val { color: #93c5fd; }
+.problem-code .err { color: #fca5a5; }
+.problem-code .ok { color: #86efac; }
+.problem-code .cmt { color: #475569; font-style: italic; }
+.problem-stat {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 32px;
+}
+.ps-item { text-align: center; padding: 20px; border-radius: 10px; background: rgba(255,255,255,0.03); }
+.ps-num { font-family: var(--mono); font-size: 28px; font-weight: 700; }
+.ps-label { font-size: 12px; color: var(--slate-light); margin-top: 4px; }
+
+/* ─── FEATURES ─── */
+.feat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+.feat-card {
+  padding: 24px; border-radius: 12px; background: #fff;
+  border: 1px solid #e2e8f0; transition: all 0.2s;
+}
+.feat-card:hover { border-color: var(--verde); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,156,59,0.08); }
+.feat-title { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--carvao); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.feat-tag {
+  font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+.feat-tag-new { background: rgba(0,156,59,0.1); color: var(--verde); }
+.feat-desc { font-size: 13px; color: var(--slate); line-height: 1.6; }
+
+/* ─── CODE SECTION ─── */
+.code-section { background: var(--carvao); padding: 80px 24px; }
+.code-inner { max-width: 860px; margin: 0 auto; }
+.code-block {
+  background: var(--carvao-deep); border-radius: 12px; padding: 28px 32px;
+  overflow-x: auto; border: 1px solid #1e293b; position: relative;
+}
+.code-block pre { font-family: var(--mono); font-size: 12.5px; line-height: 1.7; color: #cbd5e1; }
+.code-block .kw { color: var(--verde); }
+.code-block .str { color: var(--amarelo); }
+.code-block .num { color: #93c5fd; }
+.code-block .cmt { color: #475569; font-style: italic; }
+.code-block .type { color: #c084fc; }
+.code-block .prop { color: #67e8f9; }
+.code-label {
+  position: absolute; top: 12px; right: 16px;
+  font-family: var(--mono); font-size: 10px; color: var(--slate);
+  letter-spacing: 1px; text-transform: uppercase;
+}
+
+/* ─── DIFFERENTIATORS ─── */
+.diff-item {
+  display: flex; gap: 16px; padding: 20px; margin-bottom: 12px;
+  border-radius: 12px; background: #fff; border-left: 4px solid var(--verde);
+  transition: transform 0.15s;
+}
+.diff-item:hover { transform: translateX(4px); }
+.diff-num {
+  min-width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-weight: 800; font-size: 16px; flex-shrink: 0;
+  background: var(--verde-glow); color: var(--verde);
+}
+.diff-title { font-size: 14px; font-weight: 700; color: var(--carvao); margin-bottom: 4px; }
+.diff-desc { font-size: 13px; color: var(--slate); line-height: 1.6; }
+
+/* ─── INSTALL SECTION ─── */
+.install-section {
+  background: linear-gradient(180deg, #fff 0%, var(--gelo) 100%);
+  padding: 80px 24px;
+}
+.install-inner { max-width: 860px; margin: 0 auto; text-align: center; }
+.install-inner h2 { font-size: clamp(26px, 4vw, 38px); font-weight: 800; margin-bottom: 8px; }
+.install-inner .sub { font-size: 15px; color: var(--slate); margin-bottom: 32px; }
+.install-tabs { display: flex; justify-content: center; gap: 4px; margin-bottom: 16px; }
+.install-tab {
+  padding: 8px 20px; border-radius: 8px; border: none;
+  font-family: var(--mono); font-size: 12px; font-weight: 600;
+  background: transparent; color: var(--slate); cursor: pointer;
+  transition: all 0.2s;
+}
+.install-tab.active { background: var(--carvao); color: #fff; }
+.install-cmd {
+  display: inline-flex; align-items: center; gap: 12px;
+  background: var(--carvao); color: #e2e8f0; padding: 16px 24px;
+  border-radius: 12px; font-family: var(--mono); font-size: 14px;
+  cursor: pointer; border: 1px solid rgba(255,255,255,0.08);
+  transition: border-color 0.2s;
+}
+.install-cmd:hover { border-color: var(--verde); }
+.install-cmd .dollar { color: var(--verde); margin-right: 4px; user-select: none; }
+.install-cmd .copy-icon { color: var(--slate); transition: color 0.2s; }
+.install-cmd:hover .copy-icon { color: var(--verde); }
+
+/* Entry points */
+.entry-table {
+  margin-top: 32px; border-radius: 12px; overflow: hidden;
+  border: 1px solid #e2e8f0; text-align: left;
+}
+.entry-table table { width: 100%; border-collapse: collapse; }
+.entry-table th {
+  background: var(--carvao); color: #e2e8f0; padding: 12px 20px;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.entry-table td {
+  padding: 14px 20px; font-size: 13px; border-top: 1px solid #e2e8f0;
+  background: #fff;
+}
+.entry-table td:first-child { font-family: var(--mono); font-weight: 600; color: var(--verde-dim); }
+.entry-table td:last-child { color: var(--slate); }
+
+/* ─── CBS/IBS CALLOUT ─── */
+.reform-callout {
+  max-width: 860px; margin: 0 auto; padding: 0 24px 80px;
+}
+.reform-box {
+  background: linear-gradient(135deg, rgba(0,156,59,0.06) 0%, rgba(0,39,118,0.06) 100%);
+  border: 1px solid rgba(0,156,59,0.15); border-radius: 16px;
+  padding: 32px; display: flex; gap: 24px; align-items: flex-start;
+}
+.reform-icon {
+  min-width: 48px; height: 48px; border-radius: 12px;
+  background: var(--verde-glow); display: flex; align-items: center;
+  justify-content: center; font-size: 22px; flex-shrink: 0;
+}
+.reform-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.reform-desc { font-size: 13px; color: var(--slate); line-height: 1.7; }
+.reform-desc code {
+  font-family: var(--mono); font-size: 12px; background: rgba(0,156,59,0.08);
+  padding: 1px 6px; border-radius: 4px; color: var(--verde-dim);
+}
+
+/* ─── FOOTER ─── */
+.footer {
+  text-align: center; padding: 60px 24px;
+  background: var(--carvao); color: var(--slate-light);
+}
+.footer-logo {
+  font-family: var(--mono); font-size: 20px; font-weight: 700; color: #fff;
+  margin-bottom: 4px;
+}
+.footer-logo .br { color: var(--verde); }
+.footer-logo .fx { color: var(--amarelo); font-weight: 400; font-size: 14px; opacity: 0.7; }
+.footer-sub { font-family: var(--mono); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 24px; }
+.footer-links { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; }
+.footer-links a {
+  color: var(--verde); text-decoration: none; font-family: var(--mono);
+  font-size: 12px; transition: color 0.2s;
+}
+.footer-links a:hover { color: #86efac; text-decoration: underline; }
+.footer-copy { margin-top: 24px; font-size: 12px; color: var(--slate); }
+
+/* ─── ANIMATIONS ─── */
+.fade-in {
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+
+/* ─── API TABS ─── */
+.api-tabs {
+  display: flex; gap: 0; background: var(--carvao-deep);
+  border-bottom: 1px solid #1e293b; border-radius: 12px 12px 0 0; overflow-x: auto;
+}
+.api-tab {
+  padding: 10px 20px; border: none; background: none;
+  font-family: var(--mono); font-size: 11px; color: var(--slate);
+  cursor: pointer; border-bottom: 2px solid transparent;
+  transition: all 0.2s; white-space: nowrap;
+}
+.api-tab:hover { color: var(--slate-light); }
+.api-tab.active { color: #fff; border-bottom-color: var(--verde); background: rgba(0,156,59,0.08); }
+.api-panel { display: none; }
+.api-panel.active { display: block; }
+
+/* ─── AUDIT VISUAL ─── */
+.audit-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+  margin-top: 24px; align-items: start;
+}
+.audit-narrative p { font-size: 15px; line-height: 1.8; color: var(--slate-light); margin-bottom: 12px; }
+.audit-narrative strong { color: #e2e8f0; }
+.audit-steps-visual { background: var(--carvao-deep); border-radius: 12px; overflow: hidden; border: 1px solid #1e293b; }
+.audit-steps-header {
+  padding: 10px 16px; background: #0a0f1a; border-bottom: 1px solid #1e293b;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.audit-steps-header span { font-family: var(--mono); font-size: 10px; }
+.a-step {
+  display: flex; justify-content: space-between; padding: 10px 16px;
+  border-bottom: 1px solid rgba(30,41,59,0.5); font-family: var(--mono); font-size: 12px;
+}
+.a-step:last-child { border-bottom: none; }
+.a-step .a-label { color: var(--slate-light); }
+.a-step .a-val { color: var(--amarelo); }
+.a-step.a-final .a-label { color: var(--verde); font-weight: 600; }
+.a-step.a-final .a-val { color: var(--verde); font-weight: 700; }
+
+/* ─── STATS ─── */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px; margin-top: 24px;
+}
+.stat-card {
+  background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;
+  padding: 24px; text-align: center; transition: border-color 0.2s;
+}
+.stat-card:hover { border-color: var(--verde); }
+.stat-value {
+  font-family: var(--mono); font-size: 28px; font-weight: 700;
+  color: var(--verde-dim); line-height: 1; margin-bottom: 6px;
+}
+.stat-label { font-size: 12px; color: var(--slate); }
+
+/* ─── FINAL CTA ─── */
+.final-cta-section { background: var(--carvao); padding: 80px 24px; text-align: center; }
+.final-cta-inner { max-width: 600px; margin: 0 auto; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 640px) {
+  .feat-grid { grid-template-columns: 1fr; }
+  .problem-stat { grid-template-columns: 1fr; }
+  .reform-box { flex-direction: column; }
+  .diff-item { flex-direction: column; }
+  .diff-num { width: 40px; }
+  .hero { padding: 60px 16px 40px; }
+  .section { padding: 60px 16px; }
+  .code-block { padding: 20px 16px; }
+  .code-block pre { font-size: 11px; }
+  .install-cmd { font-size: 12px; padding: 14px 16px; }
+  .audit-grid { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV (aparece no scroll) -->
+<nav class="nav" id="nav" aria-label="Navegação principal">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo" aria-label="tributos-br">tributos<span style="color:var(--slate)">-</span><span class="br">br</span><span class="fx">f(x)</span></a>
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="Abrir menu" aria-expanded="false">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="nav-links" id="nav-links">
+      <a href="#problema">O Problema</a>
+      <a href="#impacto">Impacto</a>
+      <a href="#solucao">Funções</a>
+      <a href="#codigo">API</a>
+      <a href="#audit">Audit</a>
+      <a href="#instalar">Instalar</a>
+      <a href="https://github.com/vilsonneto/tributos-br" target="_blank" rel="noopener" class="nav-gh">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <div class="hero-content">
+    <div style="display:inline-flex;align-items:center;gap:8px;padding:5px 14px;background:rgba(0,156,59,0.1);border:1px solid rgba(0,156,59,0.2);border-radius:100px;font-family:var(--mono);font-size:11px;color:var(--verde);margin-bottom:20px">
+      <span style="color:var(--verde)">●</span> v1.0.1 publicada no npm
+    </div>
+    <div class="hero-pre">Cálculo tributário brasileiro para JS/TS</div>
+    <div class="hero-logo">
+      <h1>
+        <span class="hero-logo-text">tributos<span class="dash">-</span><span class="br">br</span></span>
+        <span class="hero-fx">f(x)</span>
+      </h1>
+    </div>
+    <p class="hero-tagline">
+      Precisão decimal arbitrária para NF-e em JavaScript e TypeScript.<br>
+      7 calculadores. Audit trail. Zero dependências.<br>
+      <strong>A SEFAZ não rejeita.</strong><br>
+      <span style="font-size:12px;color:var(--slate);margin-top:4px;display:inline-block">Construído por quem já debugou rejeição 629 em produção.</span>
+    </p>
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:24px">
+      <a href="https://www.npmjs.com/package/tributos-br" target="_blank" rel="noopener"><img src="https://img.shields.io/npm/v/tributos-br" alt="npm version" height="20"></a>
+      <a href="https://www.npmjs.com/package/tributos-br" target="_blank" rel="noopener"><img src="https://img.shields.io/npm/dm/tributos-br" alt="npm downloads" height="20"></a>
+      <a href="https://github.com/vilsonneto/tributos-br/actions/workflows/ci.yml" target="_blank" rel="noopener"><img src="https://github.com/vilsonneto/tributos-br/actions/workflows/ci.yml/badge.svg" alt="CI" height="20"></a>
+    </div>
+    <div class="hero-badges">
+      <span class="hero-badge hb-verde">zero deps</span>
+      <span class="hero-badge hb-verde">95%+ coverage</span>
+      <span class="hero-badge hb-azul">TypeScript strict</span>
+      <span class="hero-badge hb-azul">Node 20 / 22 / 24</span>
+      <span class="hero-badge hb-amarelo">HALF_UP (SEFAZ)</span>
+    </div>
+    <div class="hero-ctas">
+      <button class="cta-install" onclick="copyInstall('npm install tributos-br')" aria-label="Copiar comando de instalação">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        npm install tributos-br
+      </button>
+      <a href="https://github.com/vilsonneto/tributos-br" target="_blank" rel="noopener" class="cta-github">
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        Ver no GitHub
+      </a>
+    </div>
+  </div>
+  <div class="scroll-hint" aria-hidden="true">scroll</div>
+</header>
+
+<main>
+
+<!-- PROBLEMA -->
+<section class="problem-gate" id="problema">
+  <div class="problem-inner fade-in">
+    <div class="section-label" style="color:var(--red)">O problema</div>
+    <h2>IEEE 754 não serve pra dinheiro. A SEFAZ não perdoa.</h2>
+    <p style="color:var(--slate-light);font-size:15px;line-height:1.8;margin-bottom:24px">
+      JavaScript usa ponto flutuante (IEEE 754). <code style="color:#fca5a5;font-family:var(--mono);font-size:13px">0.1 + 0.2</code> não dá <code style="color:#fca5a5;font-family:var(--mono);font-size:13px">0.3</code>.
+      Quando a NF-e diverge 1 centavo, a SEFAZ rejeita com erro 629/630.
+      <code style="font-family:var(--mono);font-size:13px;color:var(--slate-light)">.toFixed(2)</code> mascara, não resolve: o erro já acumulou nas operações intermediárias.
+      <strong style="color:#e2e8f0">Nota rejeitada = venda parada.</strong>
+    </p>
+    <div class="problem-code"><pre><span class="cmt">// JavaScript nativo (IEEE 754)</span>
+<span class="val">1.064</span> * <span class="val">39680</span>
+<span class="err">// = 42219.520000000004</span>
+<span class="cmt">// .toFixed(2) mascara, mas o erro já propagou</span>
+<span class="err">// → SEFAZ: REJEITADO (erro 629). vProd ≠ vUnCom × qCom</span>
+
+<span class="cmt">// tributos-br (aritmética decimal sobre strings)</span>
+<span class="ok">Decimal.from("1.064").mul("39680").toFixed(2)</span>
+<span class="ok">// = "42219.52" (exato, sempre)</span>
+<span class="ok">// → SEFAZ: AUTORIZADO ✓</span></pre></div>
+    <div class="problem-stat">
+      <div class="ps-item">
+        <div class="ps-num" style="color:var(--red)">629</div>
+        <div class="ps-label">vProd != vUnCom x qCom</div>
+      </div>
+      <div class="ps-item">
+        <div class="ps-num" style="color:var(--red)">630</div>
+        <div class="ps-label">vProd != vUnTrib x qTrib</div>
+      </div>
+      <div class="ps-item">
+        <div class="ps-num" style="color:var(--amarelo)">1¢</div>
+        <div class="ps-label">já causa rejeição</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FUNCOES -->
+<section class="section" id="solucao">
+  <div class="fade-in">
+    <div class="section-label">O que resolve</div>
+    <h2>Cálculo fiscal completo com a precisão que a SEFAZ exige</h2>
+    <p>Funções puras. Recebe parâmetros, retorna resultado com <strong>audit trail</strong> de cada etapa. Stateless e auditável.</p>
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-title">ICMS Próprio</div>
+        <div class="feat-desc">Cálculo por dentro e por fora. Com e sem inclusão do imposto na base. Qualquer alíquota via parâmetro.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-title">IPI</div>
+        <div class="feat-desc">Cálculo por fora. Recebe valor do produto e alíquota, retorna imposto + audit trail. Use com <code style="font-family:var(--mono);font-size:12px">calcSt()</code> quando IPI compõe a base ST.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-title">DIFAL</div>
+        <div class="feat-desc">Base única (não-contribuinte, B2C) e base dupla (contribuinte, B2B, LC 190/2022). 100% destino desde 2019.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-title">ST Unificada</div>
+        <div class="feat-desc">Uma única <code style="font-family:var(--mono);font-size:12px">calcSt()</code> cobre 5 cenários via parâmetros: MVA, pauta fiscal, redução de base, FECOP.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-title">MVA Ajustada</div>
+        <div class="feat-desc">Fórmula SEFAZ com ALQ Intra + FECOP no denominador. Arredondamento em 4 casas decimais. Parâmetros puros, o chamador decide quando aplicar.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-title">
+          CBS / IBS
+          <span class="feat-tag feat-tag-new">2026</span>
+        </div>
+        <div class="feat-desc">Reforma tributária (LC 214/2025). Alíquotas de teste CBS 0,9% + IBS 0,1%. Imposto por fora. Campos NT 2025.002.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- API SHOWCASE -->
+<section class="code-section" id="codigo">
+  <div class="code-inner fade-in">
+    <div class="section-label" style="color:var(--verde)">API</div>
+    <h2 style="color:#fff;font-size:clamp(26px,4vw,38px);font-weight:800;margin-bottom:8px">Exemplos que copiam e colam</h2>
+    <p style="color:var(--slate-light);font-size:15px;line-height:1.8;margin-bottom:24px">
+      Cada calculador recebe parâmetros, retorna resultado tipado com Decimal + audit trail. Sem hardcode de alíquotas.
+    </p>
+    <div style="border-radius:12px;overflow:hidden;border:1px solid #1e293b">
+      <div class="api-tabs">
+        <button class="api-tab active" onclick="showApiTab('icms',this)">calcIcms</button>
+        <button class="api-tab" onclick="showApiTab('st',this)">calcSt</button>
+        <button class="api-tab" onclick="showApiTab('difal',this)">calcDifal</button>
+        <button class="api-tab" onclick="showApiTab('mva',this)">MVA Ajustada</button>
+        <button class="api-tab" onclick="showApiTab('decimal',this)">Decimal</button>
+      </div>
+      <div class="code-block api-panel active" id="api-icms" style="border-radius:0;border:none;margin:0"><pre><span class="kw">import</span> { calcIcms } <span class="kw">from</span> <span class="str">'tributos-br'</span>
+
+<span class="kw">const</span> resultado = calcIcms({
+  valorProduto: <span class="str">'1000'</span>,
+  aliquota: <span class="str">'0.18'</span>,         <span class="cmt">// 18%</span>
+})
+
+resultado.<span class="prop">imposto</span>.toFixed(<span class="num">2</span>)  <span class="cmt">// '180.00'</span>
+resultado.<span class="prop">base</span>.toFixed(<span class="num">2</span>)     <span class="cmt">// '1000.00'</span>
+resultado.<span class="prop">audit</span>              <span class="cmt">// [{ step: "Base ICMS", formula: "1000", value: "1000.00" }, ...]</span>
+
+<span class="cmt">// ICMS por dentro (imposto embutido no preço)</span>
+<span class="kw">const</span> porDentro = calcIcms({
+  valorProduto: <span class="str">'1000'</span>,
+  aliquota: <span class="str">'0.18'</span>,
+  incluirImpostoNaBase: <span class="num">true</span>,
+})
+porDentro.<span class="prop">base</span>.toFixed(<span class="num">2</span>)    <span class="cmt">// '1219.51' (1000 / (1 - 0.18))</span></pre></div>
+      <div class="code-block api-panel" id="api-st" style="border-radius:0;border:none;margin:0"><pre><span class="kw">import</span> { calcSt } <span class="kw">from</span> <span class="str">'tributos-br'</span>
+
+<span class="cmt">// 5 cenários de ST unificados em 1 função</span>
+<span class="kw">const</span> resultado = calcSt({
+  baseIcms: <span class="str">'1000'</span>,
+  aliquotaIcms: <span class="str">'0.12'</span>,
+  mva: <span class="str">'0.40'</span>,
+  aliquotaSt: <span class="str">'0.18'</span>,
+  valorIpi: <span class="str">'100'</span>,          <span class="cmt">// opcional - IPI compõe base ST</span>
+})
+
+resultado.<span class="prop">icmsSt</span>.toFixed(<span class="num">2</span>)   <span class="cmt">// '157.20' ICMS-ST a recolher</span>
+resultado.<span class="prop">baseSt</span>.toFixed(<span class="num">2</span>)   <span class="cmt">// '1540.00' base de cálculo ST</span>
+resultado.<span class="prop">audit</span>              <span class="cmt">// [...passo a passo rastreável]</span></pre></div>
+      <div class="code-block api-panel" id="api-difal" style="border-radius:0;border:none;margin:0"><pre><span class="kw">import</span> { calcDifal } <span class="kw">from</span> <span class="str">'tributos-br'</span>
+
+<span class="cmt">// Base dupla (LC 190/2022), contribuinte</span>
+<span class="kw">const</span> resultado = calcDifal({
+  valorOperacao: <span class="str">'1000'</span>,
+  aliquotaInterestadual: <span class="str">'0.12'</span>,
+  aliquotaInternaDestino: <span class="str">'0.18'</span>,
+  destinatarioContribuinte: <span class="num">true</span>,  <span class="cmt">// ← muda o cálculo</span>
+})
+
+resultado.<span class="prop">difal</span>               <span class="cmt">// Decimal, diferencial de alíquota</span>
+resultado.<span class="prop">baseDifal</span>.toFixed(<span class="num">2</span>) <span class="cmt">// '1073.17' base recalculada "por dentro"</span>
+resultado.<span class="prop">audit</span>               <span class="cmt">// [...cada etapa documentada]</span></pre></div>
+      <div class="code-block api-panel" id="api-mva" style="border-radius:0;border:none;margin:0"><pre><span class="kw">import</span> { calcMvaAjustada } <span class="kw">from</span> <span class="str">'tributos-br'</span>
+
+<span class="cmt">// MVA ajustada para operação interestadual</span>
+<span class="kw">const</span> resultado = calcMvaAjustada({
+  mvaOriginal: <span class="str">'0.40'</span>,            <span class="cmt">// 40%</span>
+  aliquotaInterestadual: <span class="str">'0.12'</span>, <span class="cmt">// 12%</span>
+  aliquotaInterna: <span class="str">'0.18'</span>,        <span class="cmt">// 18%</span>
+  fecop: <span class="str">'0.02'</span>,                  <span class="cmt">// FECOP 2% (RJ, MG, CE...)</span>
+})
+
+resultado.<span class="prop">mvaAjustada</span>.toFixed(<span class="num">4</span>)  <span class="cmt">// '0.5400' (54%)</span>
+resultado.<span class="prop">audit</span>                    <span class="cmt">// [...fórmula com FECOP no denominador]</span>
+
+<span class="cmt">// Sem FECOP: ignorar gera ~4pp de diferença na MVA</span>
+<span class="cmt">// ALQ Intra Efetiva = ALQ Interna + FECOP</span></pre></div>
+      <div class="code-block api-panel" id="api-decimal" style="border-radius:0;border:none;margin:0"><pre><span class="kw">import</span> { <span class="type">Decimal</span>, <span class="type">RoundingMode</span> } <span class="kw">from</span> <span class="str">'tributos-br/precision'</span>
+
+<span class="cmt">// Entry point separado, use só a precisão sem os calculadores</span>
+<span class="kw">const</span> a = Decimal.from(<span class="str">'1.064'</span>)
+<span class="kw">const</span> b = Decimal.from(<span class="str">'39680'</span>)
+
+a.mul(b).toFixed(<span class="num">2</span>)              <span class="cmt">// '42219.52' (exato, sempre)</span>
+a.add(<span class="str">'0.2'</span>)                      <span class="cmt">// Decimal('1.264'), sem IEEE 754</span>
+
+<span class="cmt">// Atalhos monetários</span>
+Decimal.from(<span class="str">'1.235'</span>).toMoney().toFixed(<span class="num">2</span>)   <span class="cmt">// '1.24'</span>
+Decimal.from(<span class="str">'0.12345'</span>).toRate().toFixed(<span class="num">4</span>)  <span class="cmt">// '0.1235'</span>
+
+<span class="cmt">// Comparações</span>
+Decimal.from(<span class="str">'1.23'</span>).gt(<span class="str">'1.22'</span>)  <span class="cmt">// true</span>
+Decimal.max(<span class="str">'100'</span>, <span class="str">'200'</span>)        <span class="cmt">// Decimal('200')</span>
+
+<span class="cmt">// Imutável. 7 modos de arredondamento. Encadeável.</span></pre></div>
+    </div>
+  </div>
+</section>
+
+<!-- AUDIT TRAIL -->
+<section class="code-section" id="audit" style="padding-top:0">
+  <div class="code-inner fade-in">
+    <div class="section-label" style="color:var(--verde)">Audit Trail</div>
+    <h2 style="color:#fff;font-size:clamp(26px,4vw,38px);font-weight:800;margin-bottom:8px">Cada centavo rastreável</h2>
+    <div class="audit-grid">
+      <div class="audit-narrative">
+        <p><strong>A SEFAZ rejeitou. E agora?</strong></p>
+        <p>Com <code style="font-family:var(--mono);font-size:13px;color:var(--slate-light)">.toFixed(2)</code>, você sabe que deu errado. Com tributos-br, você sabe <strong>onde</strong> deu errado.</p>
+        <p>Todo calculador retorna um array <code style="font-family:var(--mono);font-size:12px;background:rgba(0,156,59,0.1);padding:2px 6px;border-radius:4px;color:var(--verde)">audit: AuditStep[]</code> com cada operação intermediária. Nome do passo, fórmula aplicada, valor resultante.</p>
+        <p><strong>A maioria dos ERPs menores não expõe isso.</strong> Quando o fiscal liga perguntando "de onde veio esse número", você tem a resposta.</p>
+      </div>
+      <div class="audit-steps-visual">
+        <div class="audit-steps-header">
+          <span style="color:var(--slate-light)">calcSt() → audit</span>
+          <span style="color:var(--verde)">✓ 4 passos</span>
+        </div>
+        <div class="a-step"><span class="a-label">Base ICMS</span><span class="a-val">1000.00</span></div>
+        <div class="a-step"><span class="a-label">ICMS Próprio (12%)</span><span class="a-val">120.00</span></div>
+        <div class="a-step"><span class="a-label">Base ST (MVA + IPI)</span><span class="a-val">1540.00</span></div>
+        <div class="a-step a-final"><span class="a-label">ICMS-ST (1540.00 × 0.18 − 120.00)</span><span class="a-val">157.20</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACTO FINANCEIRO -->
+<section class="problem-gate" id="impacto" style="padding:60px 24px">
+  <div class="problem-inner fade-in">
+    <div class="section-label" style="color:var(--amarelo)">Quanto custa errar</div>
+    <h2 style="color:var(--amarelo)">Centavos por operação. Milhares por mês.</h2>
+    <p style="color:var(--slate-light);font-size:15px;line-height:1.8;margin-bottom:32px">
+      O erro não parece grande em uma nota. Mas se repete em todas.
+    </p>
+    <div class="problem-stat">
+      <div class="ps-item">
+        <div class="ps-num" style="color:var(--amarelo)">R$ 13,17</div>
+        <div class="ps-label">DIFAL: diferença por operação entre base única e base dupla</div>
+      </div>
+      <div class="ps-item">
+        <div class="ps-num" style="color:var(--amarelo)">R$ 58,83</div>
+        <div class="ps-label">ST vs antecipação: diferença por operação quando confunde o regime</div>
+      </div>
+      <div class="ps-item">
+        <div class="ps-num" style="color:var(--red)">R$ 29.415</div>
+        <div class="ps-label">por mês, em 500 operações interestaduais com o método errado</div>
+      </div>
+    </div>
+    <p style="color:var(--slate);font-size:13px;line-height:1.7;margin-top:24px">
+      Valores calculados com operação interestadual de R$ 1.000, alíquota inter 12%, interna 18%, MVA 40%.
+    </p>
+  </div>
+</section>
+
+<!-- DIFERENCIAIS -->
+<section class="section" id="diferenciais">
+  <div class="fade-in">
+    <div class="section-label">Diferenciais</div>
+    <h2>Por que tributos-br?</h2>
+    <p>O que faz alguém instalar em vez de implementar na mão.</p>
+
+    <div class="diff-item">
+      <div class="diff-num">1</div>
+      <div>
+        <div class="diff-title">Audit trail em cada cálculo</div>
+        <div class="diff-desc">Quando a SEFAZ rejeita, você sabe exatamente onde o arredondamento ou a precisão causou a divergência. Cada função retorna um array de steps com fórmula e valor de cada etapa. A maioria das libs e ERPs menores não oferece isso.</div>
+      </div>
+    </div>
+
+    <div class="diff-item">
+      <div class="diff-num">2</div>
+      <div>
+        <div class="diff-title">DIFAL base dupla (LC 190/2022)</div>
+        <div class="diff-desc">A maioria dos ERPs menores calcula DIFAL apenas com base única. tributos-br implementa ambos os métodos: base única para não-contribuinte (B2C) e base dupla para contribuinte (B2B), selecionando automaticamente via parâmetro.</div>
+      </div>
+    </div>
+
+    <div class="diff-item">
+      <div class="diff-num">3</div>
+      <div>
+        <div class="diff-title">FECOP na MVA Ajustada</div>
+        <div class="diff-desc">ALQ Intra Efetiva = ALQ Interna + FECOP. Ignorar FECOP gera diferença de ~4 pontos percentuais na MVA. Estados com FECOP: RJ, MG, CE, PE, BA, GO, MT, PI.</div>
+      </div>
+    </div>
+
+    <div class="diff-item">
+      <div class="diff-num">4</div>
+      <div>
+        <div class="diff-title">Função ST unificada</div>
+        <div class="diff-desc">Uma única <code style="font-family:var(--mono);font-size:12px">calcSt()</code> cobre todos os 5 cenários de Substituição Tributária via parâmetros opcionais: MVA original, MVA ajustada com FECOP, pauta fiscal, redução de base. Sem nomenclatura ST-01 a ST-05.</div>
+      </div>
+    </div>
+
+    <div class="diff-item">
+      <div class="diff-num">5</div>
+      <div>
+        <div class="diff-title">Não é "só mais uma lib de decimal"</div>
+        <div class="diff-desc">decimal.js e big.js resolvem precisão, mas você ainda precisa implementar cada fórmula fiscal, cada modo de arredondamento SEFAZ, cada cenário de ST/DIFAL/MVA. tributos-br entrega as calculadoras prontas, tipadas, com audit trail. Zero dependências, incluindo as de decimal.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="section">
+  <div class="fade-in">
+    <div class="section-label">Números</div>
+    <h2>O que tem dentro</h2>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-value">0</div><div class="stat-label">dependências</div></div>
+      <div class="stat-card"><div class="stat-value">7</div><div class="stat-label">calculadores</div></div>
+      <div class="stat-card"><div class="stat-value">95%+</div><div class="stat-label">cobertura de testes</div></div>
+      <div class="stat-card"><div class="stat-value">7</div><div class="stat-label">modos de arredondamento</div></div>
+      <div class="stat-card"><div class="stat-value">ESM+CJS</div><div class="stat-label">dual output</div></div>
+      <div class="stat-card"><div class="stat-value">20</div><div class="stat-label">dígitos de precisão</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- REFORMA TRIBUTARIA CALLOUT -->
+<div class="reform-callout">
+  <div class="reform-box fade-in">
+    <div class="reform-icon">&#9889;</div>
+    <div>
+      <div class="reform-title">Reforma Tributária 2026</div>
+      <div class="reform-desc">
+        A LC 214/2025 cria CBS (substitui PIS/COFINS) e IBS (substitui ICMS/ISS). A partir de 2026, os campos CBS e IBS entram em fase de teste obrigatório na NF-e (NT 2025.002), com alíquotas reduzidas (CBS 0,9% + IBS 0,1%). A transição gradual vai até 2033.
+        tributos-br já implementa <code>calcCbs()</code> e <code>calcIbs()</code> com alíquotas parametrizáveis para acompanhar cada fase.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INSTALACAO -->
+<section class="install-section" id="instalar">
+  <div class="install-inner fade-in">
+    <div class="section-label" style="text-align:center">Instalação</div>
+    <h2>Comece em 30 segundos</h2>
+    <p class="sub">Funciona com npm, yarn e pnpm. ESM e CommonJS. TypeScript strict.</p>
+
+    <div class="install-tabs" role="tablist">
+      <button class="install-tab active" role="tab" onclick="switchTab('npm')" data-pm="npm">npm</button>
+      <button class="install-tab" role="tab" onclick="switchTab('yarn')" data-pm="yarn">yarn</button>
+      <button class="install-tab" role="tab" onclick="switchTab('pnpm')" data-pm="pnpm">pnpm</button>
+    </div>
+
+    <div class="install-cmd" onclick="copyInstall(this.dataset.cmd)" data-cmd="npm install tributos-br" id="install-cmd" role="button" tabindex="0" aria-label="Copiar comando de instalação">
+      <span class="dollar" aria-hidden="true">$</span>
+      <span id="install-text">npm install tributos-br</span>
+      <svg class="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    </div>
+
+    <div class="entry-table" style="max-width:560px;margin:32px auto 0">
+      <table>
+        <thead>
+          <tr><th>Import</th><th>Conteúdo</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>tributos-br</td>
+            <td>Calculadoras (ICMS, IPI, DIFAL, ST, CBS/IBS) + Decimal</td>
+          </tr>
+          <tr>
+            <td>tributos-br/precision</td>
+            <td>Apenas Decimal + RoundingMode</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- FINAL CTA -->
+<section class="final-cta-section">
+  <div class="final-cta-inner fade-in">
+    <div class="section-label" style="color:var(--verde);text-align:center">Instale agora</div>
+    <h2 style="color:#fff;font-size:clamp(26px,4vw,38px);font-weight:800;margin-bottom:12px">Se seu sistema emite NF-e, cada centavo importa.</h2>
+    <p style="color:var(--slate-light);font-size:15px;line-height:1.8;margin-bottom:28px">
+      7 calculadores com precisão decimal arbitrária e audit trail. Zero dependências. Instale e esqueça rejeições 629/630.
+    </p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:20px">
+      <button class="cta-install" onclick="copyInstall('npm install tributos-br')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        npm install tributos-br
+      </button>
+      <a href="https://github.com/vilsonneto/tributos-br" target="_blank" rel="noopener" class="cta-github">
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-logo">tributos<span style="color:var(--slate)">-</span><span class="br">br</span> <span class="fx">f(x)</span></div>
+  <div class="footer-sub">Vilson Padilha, 2025-2026</div>
+  <div class="footer-links">
+    <a href="https://github.com/vilsonneto/tributos-br" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://www.npmjs.com/package/tributos-br" target="_blank" rel="noopener">npm</a>
+    <a href="https://github.com/vilsonneto/tributos-br/blob/main/README.md" target="_blank" rel="noopener">Documentação</a>
+    <a href="https://www.linkedin.com/in/vilson-padilha" target="_blank" rel="noopener">LinkedIn</a>
+  </div>
+  <div class="footer-copy">MIT License. Código aberto no GitHub.</div>
+</footer>
+
+<!-- TOAST -->
+<div class="copied-toast" id="toast">Copiado!</div>
+
+<script>
+// Nav: aparece depois do scroll
+const nav = document.getElementById('nav');
+let lastY = 0;
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  nav.classList.toggle('visible', y > 400);
+  lastY = y;
+}, { passive: true });
+
+// Hamburger menu
+const hamburger = document.getElementById('nav-hamburger');
+const navLinks = document.getElementById('nav-links');
+hamburger.addEventListener('click', () => {
+  const open = navLinks.classList.toggle('open');
+  hamburger.setAttribute('aria-expanded', open);
+});
+navLinks.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+    hamburger.setAttribute('aria-expanded', 'false');
+  });
+});
+
+// Copy to clipboard (with fallback)
+function copyInstall(text) {
+  function showToast() {
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 1800);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(showToast).catch(fallbackCopy);
+  } else {
+    fallbackCopy();
+  }
+  function fallbackCopy() {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast();
+  }
+}
+
+// Install tabs
+const cmds = { npm: 'npm install tributos-br', yarn: 'yarn add tributos-br', pnpm: 'pnpm add tributos-br' };
+function switchTab(pm) {
+  document.querySelectorAll('.install-tab').forEach(t => t.classList.toggle('active', t.dataset.pm === pm));
+  document.getElementById('install-text').textContent = cmds[pm];
+  document.getElementById('install-cmd').dataset.cmd = cmds[pm];
+}
+
+// Fade-in on scroll (IntersectionObserver)
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.15 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// API tabs
+function showApiTab(name, btn) {
+  document.querySelectorAll('.api-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.api-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('api-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+
+</body>
+</html>
