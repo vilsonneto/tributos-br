@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>tributos-br | Cálculo tributário brasileiro para JavaScript e TypeScript</title>
+    <title>tributos-br | Cálculo tributário brasileiro para JS/TS</title>
     <meta
       name="description"
       content="Motor de cálculo tributário com precisão decimal arbitrária. ICMS, IPI, ST, DIFAL, CBS/IBS. Zero dependências. Elimina rejeições SEFAZ 629/630."
@@ -146,6 +146,25 @@
               "text": "Sim. O tributos-br inclui calculadoras para CBS (Contribuição sobre Bens e Serviços) e IBS (Imposto sobre Bens e Serviços), os novos tributos da reforma tributária brasileira que entram em vigor a partir de 2026."
             }
           }
+        ]
+      }
+    </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "tributos-br",
+        "url": "https://tributos-br.vercel.app/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://tributos-br.vercel.app/og-image.png",
+          "width": 1200,
+          "height": 630
+        },
+        "sameAs": [
+          "https://github.com/vilsonneto/tributos-br",
+          "https://www.npmjs.com/package/tributos-br"
         ]
       }
     </script>
@@ -1702,66 +1721,75 @@ Decimal.max(<span class="str">'100'</span>, <span class="str">'200'</span>)     
           <h2>Por que tributos-br?</h2>
           <p>O que faz alguém instalar em vez de implementar na mão.</p>
 
-          <div class="diff-item">
-            <div class="diff-num">1</div>
-            <div>
-              <div class="diff-title">Audit trail em cada cálculo</div>
-              <div class="diff-desc">
-                Quando a SEFAZ rejeita, você sabe exatamente onde o arredondamento ou a precisão
-                causou a divergência. Cada função retorna um array de steps com fórmula e valor de
-                cada etapa. A maioria das libs e ERPs menores não oferece isso.
+          <ul style="list-style: none; padding: 0; margin: 0">
+            <li>
+              <div class="diff-item">
+                <div class="diff-num">1</div>
+                <div>
+                  <div class="diff-title">Audit trail em cada cálculo</div>
+                  <div class="diff-desc">
+                    Quando a SEFAZ rejeita, você sabe exatamente onde o arredondamento ou a precisão
+                    causou a divergência. Cada função retorna um array de steps com fórmula e valor
+                    de cada etapa. A maioria das libs e ERPs menores não oferece isso.
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-
-          <div class="diff-item">
-            <div class="diff-num">2</div>
-            <div>
-              <div class="diff-title">DIFAL base dupla (LC 190/2022)</div>
-              <div class="diff-desc">
-                A maioria dos ERPs menores calcula DIFAL apenas com base única. tributos-br
-                implementa ambos os métodos: base única para não-contribuinte (B2C) e base dupla
-                para contribuinte (B2B), selecionando automaticamente via parâmetro.
+            </li>
+            <li>
+              <div class="diff-item">
+                <div class="diff-num">2</div>
+                <div>
+                  <div class="diff-title">DIFAL base dupla (LC 190/2022)</div>
+                  <div class="diff-desc">
+                    A maioria dos ERPs menores calcula DIFAL apenas com base única. tributos-br
+                    implementa ambos os métodos: base única para não-contribuinte (B2C) e base dupla
+                    para contribuinte (B2B), selecionando automaticamente via parâmetro.
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-
-          <div class="diff-item">
-            <div class="diff-num">3</div>
-            <div>
-              <div class="diff-title">FECOP na MVA Ajustada</div>
-              <div class="diff-desc">
-                ALQ Intra Efetiva = ALQ Interna + FECOP. Ignorar FECOP gera diferença de ~4 pontos
-                percentuais na MVA. Estados com FECOP: RJ, MG, CE, PE, BA, GO, MT, PI.
+            </li>
+            <li>
+              <div class="diff-item">
+                <div class="diff-num">3</div>
+                <div>
+                  <div class="diff-title">FECOP na MVA Ajustada</div>
+                  <div class="diff-desc">
+                    ALQ Intra Efetiva = ALQ Interna + FECOP. Ignorar FECOP gera diferença de ~4
+                    pontos percentuais na MVA. Estados com FECOP: RJ, MG, CE, PE, BA, GO, MT, PI.
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-
-          <div class="diff-item">
-            <div class="diff-num">4</div>
-            <div>
-              <div class="diff-title">Função ST unificada</div>
-              <div class="diff-desc">
-                Uma única
-                <code style="font-family: var(--mono); font-size: 12px">calcSt()</code> cobre todos
-                os 5 cenários de Substituição Tributária via parâmetros opcionais: MVA original, MVA
-                ajustada com FECOP, pauta fiscal, redução de base. Sem nomenclatura ST-01 a ST-05.
+            </li>
+            <li>
+              <div class="diff-item">
+                <div class="diff-num">4</div>
+                <div>
+                  <div class="diff-title">Função ST unificada</div>
+                  <div class="diff-desc">
+                    Uma única
+                    <code style="font-family: var(--mono); font-size: 12px">calcSt()</code> cobre
+                    todos os 5 cenários de Substituição Tributária via parâmetros opcionais: MVA
+                    original, MVA ajustada com FECOP, pauta fiscal, redução de base. Sem
+                    nomenclatura ST-01 a ST-05.
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-
-          <div class="diff-item">
-            <div class="diff-num">5</div>
-            <div>
-              <div class="diff-title">Não é "só mais uma lib de decimal"</div>
-              <div class="diff-desc">
-                decimal.js e big.js resolvem precisão, mas você ainda precisa implementar cada
-                fórmula fiscal, cada modo de arredondamento SEFAZ, cada cenário de ST/DIFAL/MVA.
-                tributos-br entrega as calculadoras prontas, tipadas, com audit trail. Zero
-                dependências, incluindo as de decimal.
+            </li>
+            <li>
+              <div class="diff-item">
+                <div class="diff-num">5</div>
+                <div>
+                  <div class="diff-title">Não é "só mais uma lib de decimal"</div>
+                  <div class="diff-desc">
+                    decimal.js e big.js resolvem precisão, mas você ainda precisa implementar cada
+                    fórmula fiscal, cada modo de arredondamento SEFAZ, cada cenário de ST/DIFAL/MVA.
+                    tributos-br entrega as calculadoras prontas, tipadas, com audit trail. Zero
+                    dependências, incluindo as de decimal.
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            </li>
+          </ul>
         </div>
       </section>
 
