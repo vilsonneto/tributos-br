@@ -15,6 +15,7 @@
     <meta name="author" content="Vilson Padilha" />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://tributos-br.vercel.app/" />
+    <link rel="alternate" type="text/plain" href="https://tributos-br.vercel.app/llms.txt" title="LLM-readable description" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
@@ -47,37 +48,100 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "SoftwareSourceCode",
-        "name": "tributos-br",
-        "alternateName": "tributos-br f(x)",
-        "description": "Motor de cálculo tributário brasileiro com precisão decimal arbitrária. ICMS, IPI, DIFAL, Substituição Tributária, CBS/IBS. Zero dependências.",
-        "programmingLanguage": ["TypeScript", "JavaScript"],
-        "runtimePlatform": "Node.js",
-        "codeRepository": "https://github.com/vilsonneto/tributos-br",
-        "license": "https://opensource.org/licenses/MIT",
-        "author": {
-          "@type": "Person",
-          "name": "Vilson Padilha",
-          "url": "https://github.com/vilsonneto"
+        "@type": "WebPage",
+        "name": "tributos-br | Cálculo tributário brasileiro para JavaScript e TypeScript",
+        "description": "Motor de cálculo tributário com precisão decimal arbitrária. ICMS, IPI, ST, DIFAL, CBS/IBS. Zero dependências. Elimina rejeições SEFAZ 629/630.",
+        "url": "https://tributos-br.vercel.app/",
+        "inLanguage": "pt-BR",
+        "mainEntity": {
+          "@type": "SoftwareSourceCode",
+          "name": "tributos-br",
+          "alternateName": "tributos-br f(x)",
+          "description": "Motor de cálculo tributário brasileiro com precisão decimal arbitrária. ICMS, IPI, DIFAL, Substituição Tributária, CBS/IBS. Zero dependências.",
+          "programmingLanguage": ["TypeScript", "JavaScript"],
+          "runtimePlatform": "Node.js",
+          "codeRepository": "https://github.com/vilsonneto/tributos-br",
+          "license": "https://opensource.org/licenses/MIT",
+          "author": {
+            "@type": "Person",
+            "name": "Vilson Padilha",
+            "url": "https://github.com/vilsonneto",
+            "sameAs": [
+              "https://www.linkedin.com/in/vilson-padilha",
+              "https://github.com/vilsonneto"
+            ]
+          },
+          "keywords": [
+            "cálculo tributário",
+            "ICMS",
+            "IPI",
+            "DIFAL",
+            "ST",
+            "SEFAZ",
+            "NF-e",
+            "precisão decimal",
+            "CBS",
+            "IBS"
+          ],
+          "applicationCategory": "DeveloperApplication",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "BRL"
+          }
         },
-        "keywords": [
-          "cálculo tributário",
-          "ICMS",
-          "IPI",
-          "DIFAL",
-          "ST",
-          "SEFAZ",
-          "NF-e",
-          "precisão decimal",
-          "CBS",
-          "IBS"
-        ],
-        "applicationCategory": "DeveloperApplication",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "BRL"
+        "publisher": {
+          "@type": "Organization",
+          "name": "tributos-br",
+          "url": "https://tributos-br.vercel.app/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://tributos-br.vercel.app/og-image.png",
+            "width": 1200,
+            "height": 630
+          }
         }
+      }
+    </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "O que é o tributos-br?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "tributos-br é uma biblioteca npm open-source para cálculo tributário brasileiro com precisão decimal arbitrária. Suporta ICMS, IPI, DIFAL, Substituição Tributária, CBS e IBS, eliminando erros de arredondamento IEEE 754 que causam rejeições SEFAZ 629/630."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Por que não usar Number do JavaScript para cálculos fiscais?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "O tipo Number do JavaScript usa IEEE 754 (ponto flutuante de 64 bits), que introduz drift de centavos em multiplicações e divisões. Por exemplo, 0.1 + 0.2 !== 0.3. Em NF-e, isso causa rejeição SEFAZ quando vProd ≠ vUnCom × qCom. O tributos-br resolve isso com aritmética de strings de precisão arbitrária."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Como instalar o tributos-br?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Instale via npm com 'npm install tributos-br', yarn com 'yarn add tributos-br', ou pnpm com 'pnpm add tributos-br'. A biblioteca tem zero dependências externas e suporta Node.js 20+."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "O tributos-br já suporta a reforma tributária (CBS/IBS)?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Sim. O tributos-br inclui calculadoras para CBS (Contribuição sobre Bens e Serviços) e IBS (Imposto sobre Bens e Serviços), os novos tributos da reforma tributária brasileira que entram em vigor a partir de 2026."
+            }
+          }
+        ]
       }
     </script>
 

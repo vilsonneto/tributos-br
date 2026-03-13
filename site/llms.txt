@@ -1,0 +1,48 @@
+# tributos-br
+
+Motor de cálculo tributário brasileiro com precisão decimal arbitrária para JavaScript e TypeScript.
+
+## O que é
+
+tributos-br é uma biblioteca npm open-source (MIT) que resolve o problema de arredondamento IEEE 754 em cálculos fiscais brasileiros. Usa aritmética de strings internamente, garantindo que `vUnCom × qCom = vProd` sem drift de centavos. Isso elimina rejeições SEFAZ 629/630 em NF-e.
+
+## Tributos suportados
+
+- ICMS (imposto sobre circulação de mercadorias)
+- IPI (imposto sobre produtos industrializados)
+- DIFAL (diferencial de alíquotas)
+- Substituição Tributária (ICMS-ST)
+- CBS e IBS (reforma tributária 2026+)
+
+## Instalação
+
+```bash
+npm install tributos-br
+```
+
+## API principal
+
+```typescript
+import { calcularICMS, calcularIPI, calcularDIFAL, calcularST, calcularCBS, calcularIBS } from 'tributos-br';
+import { Decimal, RoundingMode } from 'tributos-br/precision';
+```
+
+Cada calculadora recebe um objeto tipado e retorna todos os campos exigidos pelo layout XML da NF-e (base de cálculo, valor do imposto, alíquota efetiva).
+
+## Características técnicas
+
+- Zero dependências externas
+- Aritmética de precisão arbitrária (classe Decimal baseada em strings)
+- Arredondamento HALF_UP (padrão SEFAZ) com 7 modos disponíveis
+- Dual output: ESM + CommonJS
+- TypeScript nativo com tipos exportados
+- Node.js >= 20
+- 95%+ de cobertura de testes
+
+## Links
+
+- Repositório: https://github.com/vilsonneto/tributos-br
+- npm: https://www.npmjs.com/package/tributos-br
+- Site: https://tributos-br.vercel.app
+- Autor: Vilson Padilha (https://github.com/vilsonneto)
+- Licença: MIT
