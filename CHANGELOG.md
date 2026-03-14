@@ -1,5 +1,33 @@
 # tributos-br
 
+## 1.1.0
+
+### Minor Changes
+
+- calcDifal() — novo modo `baseReduzida` para ICMS CST 20 com benefício fiscal
+
+  Quando há redução de base de cálculo (pRedBC), a base do DIFAL de destino
+  precisa ser recalculada via ICMS "por dentro", com intermediários arredondados
+  a 2 casas (campos monetários do XML da NF-e).
+
+  Descoberto a partir de NF-e real (EMANX, SEFAZ/MG, cStat 100): sem este modo,
+  o calcDifal retornava DIFAL de R$ 0,73 quando o valor correto é R$ 1,22.
+
+  Uso:
+
+  ```ts
+  calcDifal({
+    valorOperacao: '12.20', // base já reduzida pelo caller
+    aliquotaInterestadual: '0.12',
+    aliquotaInternaDestino: '0.18',
+    destinatarioContribuinte: false,
+    baseReduzida: true, // ← novo parâmetro
+  })
+  ```
+
+- NF-e ground truth: 8 NF-e reais, 53 testes rastreáveis a documentos aceitos pela SEFAZ
+- ADR-002 atualizado com caso concreto de gap descoberto por NF-e real
+
 ## 1.0.0
 
 ### Major Changes
