@@ -103,6 +103,98 @@ describe('calcDifal', () => {
     })
   })
 
+  describe('base reduzida (baseReduzida: true, CST 20)', () => {
+    it('12.20 (base reduzida 95%), inter 12%, interna 18% → difal = 1.22', () => {
+      // baseDifal = round(12.20 / 0.82) = 14.88
+      // icmsOrigem = round(12.20 × 0.12) = 1.46
+      // icmsDestino = round(14.88 × 0.18) = 2.68
+      // difal = 2.68 - 1.46 = 1.22
+      const r = calcDifal({
+        valorOperacao: '12.20',
+        aliquotaInterestadual: '0.12',
+        aliquotaInternaDestino: '0.18',
+        destinatarioContribuinte: false,
+        baseReduzida: true,
+      })
+      expect(r.baseDifal.toString()).toBe('14.88')
+      expect(r.icmsOrigem.toString()).toBe('1.46')
+      expect(r.icmsDestino.toString()).toBe('2.68')
+      expect(r.difal.toString()).toBe('1.22')
+    })
+
+    it('1000 com redução 50% (base 500), inter 12%, interna 18% → baseDifal > valorOperacao', () => {
+      // baseDifal = round(500 / 0.82) = 609.76
+      // icmsOrigem = round(500 × 0.12) = 60
+      // icmsDestino = round(609.76 × 0.18) = 109.76
+      // difal = 109.76 - 60 = 49.76
+      const r = calcDifal({
+        valorOperacao: '500',
+        aliquotaInterestadual: '0.12',
+        aliquotaInternaDestino: '0.18',
+        destinatarioContribuinte: false,
+        baseReduzida: true,
+      })
+      expect(r.baseDifal.toString()).toBe('609.76')
+      expect(r.icmsOrigem.toString()).toBe('60')
+      expect(r.icmsDestino.toString()).toBe('109.76')
+      expect(r.difal.toString()).toBe('49.76')
+    })
+
+    it('intermediários são arredondados a 2 casas (campos XML)', () => {
+      // 123.45 / 0.82 = 150.548780... → 150.55
+      // 123.45 × 0.12 = 14.814 → 14.81
+      // 150.55 × 0.18 = 27.099 → 27.10
+      // difal = 27.10 - 14.81 = 12.29
+      const r = calcDifal({
+        valorOperacao: '123.45',
+        aliquotaInterestadual: '0.12',
+        aliquotaInternaDestino: '0.18',
+        destinatarioContribuinte: false,
+        baseReduzida: true,
+      })
+      expect(r.baseDifal.toString()).toBe('150.55')
+      expect(r.icmsOrigem.toString()).toBe('14.81')
+      expect(r.icmsDestino.toString()).toBe('27.1')
+      expect(r.difal.toString()).toBe('12.29')
+    })
+
+    it('com FECOP 2%: aliquotaInternaEfetiva = 0.20', () => {
+      // baseDifal = round(12.20 / 0.80) = 15.25
+      // icmsOrigem = round(12.20 × 0.12) = 1.46
+      // icmsDestino = round(15.25 × 0.20) = 3.05
+      // difal = 3.05 - 1.46 = 1.59
+      const r = calcDifal({
+        valorOperacao: '12.20',
+        aliquotaInterestadual: '0.12',
+        aliquotaInternaDestino: '0.18',
+        destinatarioContribuinte: false,
+        baseReduzida: true,
+        fecop: '0.02',
+      })
+      expect(r.baseDifal.toString()).toBe('15.25')
+      expect(r.difal.toString()).toBe('1.59')
+    })
+
+    it('base reduzida com destinatarioContribuinte: true é ignorado (usa base dupla)', () => {
+      // baseReduzida só se aplica quando destinatarioContribuinte = false
+      // Com true, segue o modo base dupla LC 190/2022
+      const comBaseReduzida = calcDifal({
+        valorOperacao: '12.20',
+        aliquotaInterestadual: '0.12',
+        aliquotaInternaDestino: '0.18',
+        destinatarioContribuinte: true,
+        baseReduzida: true,
+      })
+      const semBaseReduzida = calcDifal({
+        valorOperacao: '12.20',
+        aliquotaInterestadual: '0.12',
+        aliquotaInternaDestino: '0.18',
+        destinatarioContribuinte: true,
+      })
+      expect(comBaseReduzida.difal.toString()).toBe(semBaseReduzida.difal.toString())
+    })
+  })
+
   describe('edge cases', () => {
     it('fecop undefined equivale a zero', () => {
       const semFecop = calcDifal({
@@ -184,6 +276,20 @@ describe('calcDifal', () => {
       const baseStep = r.audit.find((s) => s.step === 'Base DIFAL (dupla)')
       expect(baseStep).toBeDefined()
       expect(baseStep!.formula).toContain('/')
+    })
+
+    it('base reduzida: step mostra formula por dentro', () => {
+      const r = calcDifal({
+        valorOperacao: '12.20',
+        aliquotaInterestadual: '0.12',
+        aliquotaInternaDestino: '0.18',
+        destinatarioContribuinte: false,
+        baseReduzida: true,
+      })
+      const baseStep = r.audit.find((s) => s.step === 'Base DIFAL (reduzida, por dentro)')
+      expect(baseStep).toBeDefined()
+      expect(baseStep!.formula).toContain('/')
+      expect(baseStep!.value).toBe('14.88')
     })
 
     it('com FECOP: step ALQ Interna Efetiva aparece primeiro', () => {
