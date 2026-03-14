@@ -1,0 +1,2 @@
+. "$HOME/.nvm/nvm.sh"
+npx lint-staged
