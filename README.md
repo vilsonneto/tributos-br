@@ -17,6 +17,7 @@
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
   <img src="https://img.shields.io/badge/TypeScript-strict-blue" alt="TypeScript strict">
   <img src="https://img.shields.io/badge/dependencies-0-brightgreen" alt="Zero Dependencies">
+  <a href="https://codecov.io/gh/vilsonneto/tributos-br"><img src="https://codecov.io/gh/vilsonneto/tributos-br/graph/badge.svg" alt="Coverage"></a>
 </p>
 
 ---
@@ -25,7 +26,7 @@
 
 1. **Audit trail em cada cálculo** — quando a SEFAZ rejeita, você sabe exatamente onde o arredondamento causou a divergência. Cada função retorna um array de steps com fórmula e valor de cada etapa.
 
-2. **DIFAL base dupla (LC 190/2022)** — a maioria dos ERPs menores calcula DIFAL apenas com base única. tributos-br implementa ambos os métodos e seleciona via parâmetro.
+2. **DIFAL com 3 modos** — base única, base dupla (LC 190/2022) e base reduzida (CST 20 com benefício fiscal). A maioria dos ERPs menores calcula DIFAL apenas com base única. tributos-br seleciona o modo via parâmetro.
 
 3. **FECOP na MVA Ajustada** — ALQ Intra Efetiva = ALQ Interna + FECOP. Ignorar FECOP gera diferença de ~4pp na MVA. Estados: RJ, MG, CE, PE, BA, GO, MT, PI.
 
@@ -103,7 +104,7 @@ Todas as funções recebem e retornam valores como `Decimal`, nunca `number`. Us
 | `calcIpi()`         | IPI sobre produto                             |
 | `calcMvaAjustada()` | MVA ajustada interestadual (com FECOP)        |
 | `calcSt()`          | ICMS-ST unificada (5 cenários via parâmetros) |
-| `calcDifal()`       | DIFAL base única + base dupla (LC 190/2022)   |
+| `calcDifal()`       | DIFAL base única + dupla + reduzida (CST 20)  |
 | `calcCbs()`         | CBS (reforma tributária, LC 214/2025)         |
 | `calcIbs()`         | IBS (reforma tributária, LC 214/2025)         |
 
@@ -268,6 +269,20 @@ const difalDupla = calcDifal({
 // difalDupla.icmsDestino → ~193.17
 // difalDupla.difal       → ~73.17
 
+// Base reduzida (CST 20, benefício fiscal com pRedBC)
+// Caller pré-calcula a base reduzida: 243.90 × (1 - 0.95) = 12.20
+const difalReduzida = calcDifal({
+  valorOperacao: '12.20',
+  aliquotaInterestadual: '0.12',
+  aliquotaInternaDestino: '0.18',
+  destinatarioContribuinte: false,
+  baseReduzida: true,
+})
+// difalReduzida.baseDifal   → 14.88 (12.20 / (1 - 0.18), ICMS por dentro)
+// difalReduzida.icmsOrigem  → 1.46
+// difalReduzida.icmsDestino → 2.68
+// difalReduzida.difal       → 1.22
+
 // Com FECOP
 const difalFecop = calcDifal({
   valorOperacao: '1000',
@@ -378,6 +393,8 @@ import { calcIcms, Decimal } from 'tributos-br'
 A motivação veio de experiência real com cálculo de ICMS e IPI em código de produção. Arredondamentos IEEE 754 causavam rejeições de NF-e por centavos de diferença — erro 629, valor total não bate com preço unitário vezes quantidade.
 
 Em vez de corrigir caso a caso com `toFixed`, a solução foi trocar a base: fazer aritmética em strings de dígitos, sem nunca passar por `number` nos cálculos intermediários. O resultado é uma engine de cálculo tributário que produz os mesmos valores que a SEFAZ espera, sem surpresas.
+
+Os testes são derivados da legislação vigente e de exemplos oficiais. Valores esperados nunca vêm da implementação.
 
 ---
 

@@ -65,6 +65,33 @@ O foco principal é a correção dos resultados. Cobertura é uma métrica de ap
 - **Custo de pesquisa:** exige que o implementador encontre ou construa casos reais antes de escrever a função.
 - **Ambiguidade de interpretação:** quando não existe NF-e de referência disponível, a escolha da interpretação precisa ser justificada e documentada explicitamente.
 
+## Caso concreto: DIFAL com base reduzida (CST 20)
+
+Este caso ilustra por que NF-e reais são insubstituíveis como ground truth.
+
+O `calcDifal` foi implementado com dois modos derivados da leitura da legislação: base única (não-contribuinte, EC 87/2015) e base dupla (contribuinte, LC 190/2022). Ambos os modos passavam em 100% dos testes unitários e atingiam cobertura de branches completa.
+
+Uma NF-e real (EMANX, SEFAZ/MG, cStat 100, chave 31250911118506000116550010003295001002868688) trouxe um cenário que nenhum dos dois modos cobria: ICMS CST 20 com pRedBC de 95% (benefício fiscal do RICMS/MG 2002, Anexo IV, Parte B, Item 10) em operação interestadual MG para RS com DIFAL.
+
+A redução de base cria duas bases diferentes na mesma operação:
+
+- Base ICMS interestadual (vBC): 243.90 x 0.05 = 12.20
+- Base DIFAL destino (vBCUFDest): 12.20 / (1 - 0.18) = 14.88
+
+O teste escrito com os valores da NF-e e chamando o `calcDifal` existente falhou de forma inequívoca:
+
+```
+expected '14.88', received '12.2'   (baseDifal)
+expected '1.22',  received '0.73'   (vICMSUFDest)
+```
+
+O modo base única igualava as duas bases, produzindo um DIFAL 40% menor que o aceito pela SEFAZ. Sem a NF-e real, esse erro não teria sido detectado, porque a leitura da legislação não tornava óbvio que:
+
+1. A base do DIFAL de destino precisa ser recalculada via ICMS "por dentro" sobre a base reduzida, sem subtrair o ICMS de origem (diferente da base dupla do contribuinte).
+2. Cada intermediário (vBC, vBCUFDest, vICMS) deve ser arredondado a 2 casas antes da subtração final, porque são campos monetários independentes no XML.
+
+A correção exigiu um terceiro modo no `calcDifal` (parâmetro `baseReduzida`), com fórmula e estratégia de arredondamento que só ficaram claros depois de reproduzir os valores exatos da NF-e.
+
 ## Formato esperado de um caso de teste fiscal
 
 ```ts

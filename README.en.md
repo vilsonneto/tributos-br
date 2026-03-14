@@ -70,7 +70,7 @@ All functions receive and return values as `Decimal`, never `number`. Use `.toFi
 | `calcIpi()`         | IPI (federal excise tax on manufactured products)     |
 | `calcMvaAjustada()` | Adjusted MVA for interstate operations (with FECOP)   |
 | `calcSt()`          | ICMS-ST unified (5 scenarios via optional parameters) |
-| `calcDifal()`       | DIFAL single-base + dual-base (LC 190/2022)           |
+| `calcDifal()`       | DIFAL single + dual + reduced-base (CST 20)           |
 | `calcCbs()`         | CBS (tax reform, LC 214/2025 — replaces PIS/COFINS)   |
 | `calcIbs()`         | IBS (tax reform, LC 214/2025 — replaces ICMS/ISS)     |
 
@@ -185,6 +185,20 @@ const difalDual = calcDifal({
 })
 // difalDual.baseDifal → ~1073.17
 // difalDual.difal     → ~73.17
+
+// Reduced-base (CST 20, state tax benefit with pRedBC)
+// Caller pre-computes the reduced base: 243.90 × (1 - 0.95) = 12.20
+const difalReduced = calcDifal({
+  valorOperacao: '12.20',
+  aliquotaInterestadual: '0.12',
+  aliquotaInternaDestino: '0.18',
+  destinatarioContribuinte: false,
+  baseReduzida: true,
+})
+// difalReduced.baseDifal   → 14.88 (12.20 / (1 - 0.18), tax-inclusive)
+// difalReduced.icmsOrigem  → 1.46
+// difalReduced.icmsDestino → 2.68
+// difalReduced.difal       → 1.22
 ```
 
 ### CBS and IBS (tax reform)
