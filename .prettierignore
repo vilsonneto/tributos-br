@@ -5,3 +5,4 @@ node_modules/
 scripts/
 CLAUDE.md
 skills-lock.json
+site/.vercel/
