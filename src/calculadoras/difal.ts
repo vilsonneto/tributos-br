@@ -69,17 +69,20 @@ export interface CalcDifalInput {
  * sobre o mesmo valor.
  * ```
  * icmsOrigem  = valorOperacao × aliquotaInterestadual
- * icmsDestino = valorOperacao × (aliquotaInternaDestino + fecop)
- * difal       = icmsDestino − icmsOrigem
+ * icmsDestino = valorOperacao × aliquotaInternaDestino
+ * fcp         = valorOperacao × fecop          (quando informado)
+ * difal       = icmsDestino − icmsOrigem       (sem FCP)
  * ```
  *
  * **Base dupla (contribuinte, LC 190/2022)**: o ICMS de origem é subtraído antes
  * de calcular o ICMS de destino, gerando uma base maior para o estado receptor.
+ * O FECOP entra no denominador (composição da base) mas NÃO no icmsDestino.
  * ```
  * icmsOrigem  = valorOperacao × aliquotaInterestadual
  * baseDifal   = (valorOperacao − icmsOrigem) ÷ (1 − aliquotaInternaDestino − fecop)
- * icmsDestino = baseDifal × (aliquotaInternaDestino + fecop)
- * difal       = icmsDestino − icmsOrigem
+ * icmsDestino = baseDifal × aliquotaInternaDestino
+ * fcp         = baseDifal × fecop              (quando informado)
+ * difal       = icmsDestino − icmsOrigem       (sem FCP)
  * ```
  *
  * **Base reduzida (não-contribuinte + CST 20)**: quando há benefício fiscal de
@@ -92,8 +95,9 @@ export interface CalcDifalInput {
  * ```
  * icmsOrigem  = round(valorOperacao × aliquotaInterestadual, 2)
  * baseDifal   = round(valorOperacao ÷ (1 − aliquotaInternaDestino − fecop), 2)
- * icmsDestino = round(baseDifal × (aliquotaInternaDestino + fecop), 2)
- * difal       = icmsDestino − icmsOrigem
+ * icmsDestino = round(baseDifal × aliquotaInternaDestino, 2)
+ * fcp         = round(baseDifal × fecop, 2)    (quando informado)
+ * difal       = icmsDestino − icmsOrigem        (sem FCP)
  * ```
  *
  * Este terceiro modo foi descoberto a partir de uma NF-e real (EMANX,
@@ -150,19 +154,20 @@ export function calcDifal(input: CalcDifalInput): ResultadoDifal {
 
   if (input.destinatarioContribuinte) {
     // Base dupla (LC 190/2022)
+    // A alíquota efetiva (com FECOP) é usada no denominador porque o ICMS
+    // "por dentro" inclui o FCP na composição da base.
     baseDifal = valorOperacao.sub(icmsOrigem).div(Decimal.one().sub(aliquotaInternaEfetiva))
     audit.push({
       step: 'Base DIFAL (dupla)',
       formula: `(${valorOperacao.toFixed(2)} - ${icmsOrigem.toFixed(2)}) / (1 - ${aliquotaInternaEfetiva.toFixed(4)})`,
       value: baseDifal.toFixed(2),
     })
-    icmsDestino = baseDifal.mul(aliquotaInternaEfetiva)
+    icmsDestino = baseDifal.mul(aliquotaInterna)
   } else if (input.baseReduzida === true) {
     // Base reduzida (CST 20 — benefício fiscal com pRedBC)
     // valorOperacao já é a base reduzida. A base DIFAL do destino é
     // calculada via ICMS "por dentro": divide pelo complemento da alíquota
-    // interna, sem subtrair icmsOrigem (a redução já removeu o componente
-    // tributário do preço).
+    // interna efetiva (com FECOP), sem subtrair icmsOrigem.
     //
     // Cada intermediário é arredondado a 2 casas (toMoney) porque origem e
     // destino usam bases diferentes — cada valor é um campo monetário
@@ -174,7 +179,7 @@ export function calcDifal(input: CalcDifalInput): ResultadoDifal {
       value: baseDifal.toFixed(2),
     })
     icmsOrigem = icmsOrigem.toMoney()
-    icmsDestino = baseDifal.mul(aliquotaInternaEfetiva).toMoney()
+    icmsDestino = baseDifal.mul(aliquotaInterna).toMoney()
   } else {
     // Base única
     baseDifal = valorOperacao
@@ -183,14 +188,28 @@ export function calcDifal(input: CalcDifalInput): ResultadoDifal {
       formula: valorOperacao.toFixed(2),
       value: baseDifal.toFixed(2),
     })
-    icmsDestino = baseDifal.mul(aliquotaInternaEfetiva)
+    icmsDestino = baseDifal.mul(aliquotaInterna)
   }
 
   audit.push({
     step: 'ICMS Destino',
-    formula: `${baseDifal.toFixed(2)} × ${aliquotaInternaEfetiva.toFixed(4)}`,
+    formula: `${baseDifal.toFixed(2)} × ${aliquotaInterna.toFixed(4)}`,
     value: icmsDestino.toFixed(2),
   })
+
+  // FCP separado do DIFAL — no XML, vFCPUFDest é campo independente de vICMSUFDest
+  let fcpResult: Decimal | undefined
+  if (input.fecop != null) {
+    fcpResult =
+      input.baseReduzida === true && !input.destinatarioContribuinte
+        ? baseDifal.mul(fecop).toMoney()
+        : baseDifal.mul(fecop)
+    audit.push({
+      step: 'FCP',
+      formula: `${baseDifal.toFixed(2)} × ${fecop.toFixed(4)}`,
+      value: fcpResult.toFixed(2),
+    })
+  }
 
   const difal = icmsDestino.sub(icmsOrigem)
   audit.push({
@@ -199,5 +218,12 @@ export function calcDifal(input: CalcDifalInput): ResultadoDifal {
     value: difal.toFixed(2),
   })
 
-  return { difal, icmsOrigem, icmsDestino, baseDifal, audit }
+  return {
+    difal,
+    icmsOrigem,
+    icmsDestino,
+    baseDifal,
+    ...(fcpResult != null && { fcp: fcpResult }),
+    audit,
+  }
 }

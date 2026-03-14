@@ -573,28 +573,19 @@ describe('NF-e ground truth', () => {
   //   - Origem 4 (nacional com conteúdo importado 40-70%, itens 1 e 3)
   // -------------------------------------------------------------------------
   describe('NF-e 43251215436940001177550010367259651176483930 — Amazon, 3 itens, RS, ICMS 25% + FCP', () => {
-    describe('Item 2: Bronzeador — ICMS 25%, operação interna RS', () => {
-      // Primeira alíquota diferente de 12%/17%
-      // NF-e: vBC = 34.91, pICMS = 25.0000%, vICMS = 8.73
-      // Cálculo: 34.91 × 0.25 = 8.7275 → HALF_UP 2 casas → 8.73
-      const r = calcIcms({ valorProduto: '34.91', aliquota: '0.25' })
+    describe('Item 2: ICMS 25% + FCP 2% — via parâmetro nativo', () => {
+      // FCP é um adicional sobre a mesma base do ICMS
+      // NF-e: vBC = 34.91, pICMS = 25%, vICMS = 8.73, pFCP = 2%, vFCP = 0.70
+      // Cálculo ICMS: 34.91 × 0.25 = 8.7275 → HALF_UP → 8.73
+      // Cálculo FCP:  34.91 × 0.02 = 0.6982 → HALF_UP → 0.70
+      const r = calcIcms({ valorProduto: '34.91', aliquota: '0.25', fcp: '0.02' })
 
-      it('vICMS = 8.73 (alíquota 25% para cosmético)', () => {
+      it('vICMS = 8.73', () => {
         expect(r.imposto.toMoney().toString()).toBe('8.73')
       })
-    })
 
-    describe('Item 2: FCP 2% — Fundo de Combate à Pobreza', () => {
-      // FCP é um adicional sobre a mesma base do ICMS
-      // NF-e: vBC = 34.91, pFCP = 2.0000%, vFCP = 0.70
-      // Cálculo: 34.91 × 0.02 = 0.6982 → HALF_UP 2 casas → 0.70
-      // NOTA: calcIcms não tem parâmetro FCP. Testando como multiplicação
-      // direta para validar o valor. Quando a lib suportar FCP no ICMS,
-      // este teste deve ser atualizado.
-      const r = calcIcms({ valorProduto: '34.91', aliquota: '0.02' })
-
-      it('vFCP = 0.70', () => {
-        expect(r.imposto.toMoney().toString()).toBe('0.7')
+      it('vFCP = 0.70 (campo separado)', () => {
+        expect(r.fcp!.toMoney().toString()).toBe('0.7')
       })
     })
 
@@ -939,6 +930,141 @@ describe('NF-e ground truth', () => {
 
       it('vICMSUFDest = 1.22', () => {
         expect(r.difal.toMoney().toString()).toBe('1.22')
+      })
+    })
+  })
+
+  // -------------------------------------------------------------------------
+  // NF-e #9 — X DMR Quaresma Ribeiro (via Mercado Livre), fonte Dell, SP→RS
+  //           DIFAL + FCP (primeiro ground truth com vFCPUFDest > 0)
+  // -------------------------------------------------------------------------
+  //
+  // Fonte:        NF-e modelo 55 autorizada pela SEFAZ/SP
+  //               Dados extraídos do DANFE (PDF), não do XML.
+  // Chave acesso: 35260160581999000131550040000204481418089890
+  // Protocolo:    135260175548
+  // Status:       100 — Autorizado o uso da NF-e
+  // Data emissão: 14/01/2026 21:00:57
+  //
+  // Emitente:     X DMR Quaresma Ribeiro Ltda
+  //               CNPJ 60.581.999/0001-31, IE 153818490110
+  //               São Paulo, SP
+  //
+  // Intermediador: Ebazar.com.br Ltda (Mercado Livre)
+  //
+  // Produto:      Fonte Carregador Para Dell 19.5v 3.34a 65w Plug 4.5 X 3.0mm
+  //               NCM 85044010, CST 000 (orig 0, nacional), CFOP 6102
+  //               1 UN × R$ 49,59 = R$ 49,59
+  //
+  // Tributos do item (extraídos do DANFE):
+  //   ICMS CST 00, modBC 3 (valor da operação), orig 0 (nacional)
+  //     vBC = 49.59, pICMS = 12.0000 (interestadual SP→RS), vICMS = 5.95
+  //   IPI: 0.00
+  //   DIFAL EC 87/2015 (dados adicionais do DANFE):
+  //     B.C.ICMS Dest = 49.59
+  //     pICMSUFDest = 17.0000 (inferido: 2.48 / 49.59 × 100 + 12 = 17)
+  //     pICMSInter = 12.00
+  //     vICMSUFDest = 2.48, vICMSUFRemet = 0.00
+  //     *** PRIMEIRO CASO COM FCP NO DIFAL ***
+  //     pFCPUFDest = 2.0000 (inferido: 0.99 / 49.59 = 0.01997 ≈ 2%)
+  //     vFCPUFDest = 0.99
+  //   PIS/COFINS: não disponível no DANFE (apenas IBPT aproximado)
+  //   CBS/IBS: não disponível no DANFE
+  //
+  // Verificação aritmética:
+  //   ICMS: 49.59 × 0.12 = 5.9508 → HALF_UP → 5.95 ✓
+  //   DIFAL: 49.59 × (0.17 - 0.12) = 49.59 × 0.05 = 2.4795 → 2.48 ✓
+  //   FCP:   49.59 × 0.02 = 0.9918 → 0.99 ✓
+  //   Total destino: 2.48 + 0.99 = 3.47
+  //
+  // Cenários novos nesta NF-e:
+  //   - vFCPUFDest > 0 — PRIMEIRO ground truth com FCP no contexto DIFAL
+  //     (NF-e #6 tem FCP em operação interna, mas nunca em DIFAL)
+  //   - Alíquota interna RS 17% + FCP 2% para NCM 85044010
+  //   - Emitente não-Amazon (Mercado Livre como intermediador)
+  //
+  // ACHADO: esta NF-e motivou a separação de FCP no ResultadoDifal.
+  //   calcDifal com fecop agora retorna `difal` (= vICMSUFDest, sem FCP)
+  //   e `fcp` (= vFCPUFDest) como campos separados, correspondendo
+  //   exatamente aos campos do XML validados pela SEFAZ.
+  // -------------------------------------------------------------------------
+  describe('NF-e 35260160581999000131550040000204481418089890 — X DMR Quaresma, fonte Dell, SP→RS, FCP em DIFAL', () => {
+    describe('ICMS — CST 00, interestadual SP→RS, alíquota 12%', () => {
+      // ICMS por fora: base = valor da operação
+      // DANFE: vBC = 49.59, pICMS = 12.00%, vICMS = 5.95
+      // Cálculo: 49.59 × 0.12 = 5.9508 → HALF_UP 2 casas → 5.95
+      const r = calcIcms({ valorProduto: '49.59', aliquota: '0.12' })
+
+      it('base de cálculo = valor do produto (modBC 3)', () => {
+        expect(r.base.toMoney().toString()).toBe('49.59')
+      })
+
+      it('vICMS = 5.95', () => {
+        expect(r.imposto.toMoney().toString()).toBe('5.95')
+      })
+    })
+
+    describe('DIFAL EC 87/2015 — não contribuinte, SP→RS, 12%→17% (sem FCP)', () => {
+      // Base única (consumidor final não contribuinte)
+      // DANFE: vICMSUFDest = 2.48, vICMSUFRemet = 0.00
+      // Cálculo SEM fecop para isolar vICMSUFDest (campo separado no XML):
+      //   icmsOrigem  = 49.59 × 0.12 = 5.9508
+      //   icmsDestino = 49.59 × 0.17 = 8.4303
+      //   difal       = 8.4303 - 5.9508 = 2.4795 → HALF_UP 2 casas → 2.48
+      const r = calcDifal({
+        valorOperacao: '49.59',
+        aliquotaInterestadual: '0.12',
+        aliquotaInternaDestino: '0.17',
+        destinatarioContribuinte: false,
+      })
+
+      it('base DIFAL = valor da operação (base única)', () => {
+        expect(r.baseDifal.toMoney().toString()).toBe('49.59')
+      })
+
+      it('ICMS origem (interestadual) = 5.95', () => {
+        expect(r.icmsOrigem.toMoney().toString()).toBe('5.95')
+      })
+
+      it('ICMS destino (interna RS 17%) = 8.43', () => {
+        expect(r.icmsDestino.toMoney().toString()).toBe('8.43')
+      })
+
+      it('vICMSUFDest = 2.48 (DIFAL puro, sem FCP)', () => {
+        expect(r.difal.toMoney().toString()).toBe('2.48')
+      })
+    })
+
+    describe('DIFAL + FCP separados — calcDifal com fecop (API nativa)', () => {
+      // calcDifal com fecop retorna DIFAL e FCP como campos separados,
+      // correspondendo aos campos XML vICMSUFDest e vFCPUFDest.
+      //
+      // icmsOrigem  = 49.59 × 0.12 = 5.9508
+      // icmsDestino = 49.59 × 0.17 = 8.4303 (sem FCP)
+      // fcp         = 49.59 × 0.02 = 0.9918
+      // difal       = 8.4303 - 5.9508 = 2.4795 → 2.48 (= vICMSUFDest)
+      const r = calcDifal({
+        valorOperacao: '49.59',
+        aliquotaInterestadual: '0.12',
+        aliquotaInternaDestino: '0.17',
+        fecop: '0.02',
+        destinatarioContribuinte: false,
+      })
+
+      it('vICMSUFDest = 2.48 (DIFAL puro, sem FCP)', () => {
+        expect(r.difal.toMoney().toString()).toBe('2.48')
+      })
+
+      it('vFCPUFDest = 0.99 (FCP separado)', () => {
+        expect(r.fcp!.toMoney().toString()).toBe('0.99')
+      })
+
+      it('ICMS destino (17%, sem FCP) = 8.43', () => {
+        expect(r.icmsDestino.toMoney().toString()).toBe('8.43')
+      })
+
+      it('difal + fcp = total ao destino = 3.47', () => {
+        expect(r.difal.add(r.fcp!).toMoney().toString()).toBe('3.47')
       })
     })
   })

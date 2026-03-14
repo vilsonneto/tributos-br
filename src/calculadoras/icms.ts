@@ -16,6 +16,12 @@ export interface CalcIcmsInput {
    * Por dentro: base = valorProduto ÷ (1 − aliquota)
    */
   incluirImpostoNaBase?: boolean
+  /**
+   * FCP (Fundo de Combate à Pobreza) — alíquota decimal. Ex: 0.02 para 2%.
+   * Calculado sobre a mesma base do ICMS. Retornado como campo separado
+   * no resultado (corresponde a vFCP no XML da NF-e).
+   */
+  fcp?: DecimalInput
 }
 
 /**
@@ -62,5 +68,16 @@ export function calcIcms(input: CalcIcmsInput): ResultadoSimples {
     value: imposto.toFixed(2),
   })
 
-  return { imposto, base, aliquota, audit }
+  let fcpResult: Decimal | undefined
+  if (input.fcp != null) {
+    const fcpAliquota = Decimal.from(input.fcp)
+    fcpResult = base.mul(fcpAliquota)
+    audit.push({
+      step: 'FCP',
+      formula: `${base.toFixed(2)} × ${fcpAliquota.toFixed(4)}`,
+      value: fcpResult.toFixed(2),
+    })
+  }
+
+  return { imposto, base, aliquota, ...(fcpResult != null && { fcp: fcpResult }), audit }
 }

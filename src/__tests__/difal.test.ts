@@ -6,14 +6,16 @@ import { Decimal } from '../precision/index.js'
  * Regra — base única (não-contribuinte):
  *   icmsOrigem  = valorOperacao × aliquotaInterestadual
  *   baseDifal   = valorOperacao
- *   icmsDestino = baseDifal × (aliquotaInternaDestino + fecop)
- *   difal       = icmsDestino − icmsOrigem
+ *   icmsDestino = baseDifal × aliquotaInternaDestino
+ *   fcp         = baseDifal × fecop          (quando informado)
+ *   difal       = icmsDestino − icmsOrigem   (sem FCP)
  *
  * Regra — base dupla (contribuinte, LC 190/2022):
  *   icmsOrigem  = valorOperacao × aliquotaInterestadual
  *   baseDifal   = (valorOperacao − icmsOrigem) ÷ (1 − aliquotaInternaDestino − fecop)
- *   icmsDestino = baseDifal × (aliquotaInternaDestino + fecop)
- *   difal       = icmsDestino − icmsOrigem
+ *   icmsDestino = baseDifal × aliquotaInternaDestino
+ *   fcp         = baseDifal × fecop          (quando informado)
+ *   difal       = icmsDestino − icmsOrigem   (sem FCP)
  */
 describe('calcDifal', () => {
   describe('base única (destinatarioContribuinte: false)', () => {
@@ -31,8 +33,9 @@ describe('calcDifal', () => {
       expect(r.difal.toString()).toBe('60')
     })
 
-    it('com FECOP 2%: aliquotaInternaEfetiva = 0.20 → difal = 80', () => {
-      // icmsDestino = 1000 × 0.20 = 200, difal = 200 − 120 = 80
+    it('com FECOP 2%: difal = 60 (sem FCP), fcp = 20', () => {
+      // icmsDestino = 1000 × 0.18 = 180, fcp = 1000 × 0.02 = 20
+      // difal = 180 − 120 = 60 (sem FCP — corresponde a vICMSUFDest no XML)
       const r = calcDifal({
         valorOperacao: '1000',
         aliquotaInterestadual: '0.12',
@@ -40,8 +43,9 @@ describe('calcDifal', () => {
         destinatarioContribuinte: false,
         fecop: '0.02',
       })
-      expect(r.icmsDestino.toString()).toBe('200')
-      expect(r.difal.toString()).toBe('80')
+      expect(r.icmsDestino.toString()).toBe('180')
+      expect(r.difal.toString()).toBe('60')
+      expect(r.fcp!.toString()).toBe('20')
     })
 
     it('alíquotas iguais (inter = interna) → difal zero', () => {
@@ -84,12 +88,13 @@ describe('calcDifal', () => {
       expect(baseDupla.difal.gt(baseUnica.difal)).toBe(true)
     })
 
-    it('com FECOP 2% base dupla: 880 ÷ 0.80 = 1100, difal = 100', () => {
+    it('com FECOP 2% base dupla: 880 ÷ 0.80 = 1100, difal = 78, fcp = 22', () => {
       // icmsOrigem = 120
-      // aliquotaInternaEfetiva = 0.18 + 0.02 = 0.20
+      // aliquotaInternaEfetiva = 0.18 + 0.02 = 0.20 (usada no denominador)
       // baseDifal = (1000 − 120) ÷ (1 − 0.20) = 880 ÷ 0.80 = 1100
-      // icmsDestino = 1100 × 0.20 = 220
-      // difal = 220 − 120 = 100
+      // icmsDestino = 1100 × 0.18 = 198 (sem FCP)
+      // fcp = 1100 × 0.02 = 22
+      // difal = 198 − 120 = 78
       const r = calcDifal({
         valorOperacao: '1000',
         aliquotaInterestadual: '0.12',
@@ -98,8 +103,9 @@ describe('calcDifal', () => {
         fecop: '0.02',
       })
       expect(r.baseDifal.toString()).toBe('1100')
-      expect(r.icmsDestino.toString()).toBe('220')
-      expect(r.difal.toString()).toBe('100')
+      expect(r.icmsDestino.toString()).toBe('198')
+      expect(r.difal.toString()).toBe('78')
+      expect(r.fcp!.toString()).toBe('22')
     })
   })
 
@@ -158,11 +164,12 @@ describe('calcDifal', () => {
       expect(r.difal.toString()).toBe('12.29')
     })
 
-    it('com FECOP 2%: aliquotaInternaEfetiva = 0.20', () => {
-      // baseDifal = round(12.20 / 0.80) = 15.25
+    it('com FECOP 2%: difal = 1.29, fcp = 0.31', () => {
+      // baseDifal = round(12.20 / 0.80) = 15.25 (fecop no denominador)
       // icmsOrigem = round(12.20 × 0.12) = 1.46
-      // icmsDestino = round(15.25 × 0.20) = 3.05
-      // difal = 3.05 - 1.46 = 1.59
+      // icmsDestino = round(15.25 × 0.18) = 2.75 (sem FCP)
+      // fcp = round(15.25 × 0.02) = 0.31
+      // difal = 2.75 - 1.46 = 1.29
       const r = calcDifal({
         valorOperacao: '12.20',
         aliquotaInterestadual: '0.12',
@@ -172,7 +179,9 @@ describe('calcDifal', () => {
         fecop: '0.02',
       })
       expect(r.baseDifal.toString()).toBe('15.25')
-      expect(r.difal.toString()).toBe('1.59')
+      expect(r.icmsDestino.toString()).toBe('2.75')
+      expect(r.difal.toString()).toBe('1.29')
+      expect(r.fcp!.toString()).toBe('0.31')
     })
 
     it('base reduzida com destinatarioContribuinte: true é ignorado (usa base dupla)', () => {
@@ -196,7 +205,7 @@ describe('calcDifal', () => {
   })
 
   describe('edge cases', () => {
-    it('fecop undefined equivale a zero', () => {
+    it('fecop undefined equivale a zero — difal idêntico', () => {
       const semFecop = calcDifal({
         valorOperacao: '1000',
         aliquotaInterestadual: '0.12',
@@ -211,6 +220,16 @@ describe('calcDifal', () => {
         fecop: '0',
       })
       expect(semFecop.difal.toString()).toBe(fecopZero.difal.toString())
+    })
+
+    it('sem fecop, fcp é undefined', () => {
+      const r = calcDifal({
+        valorOperacao: '1000',
+        aliquotaInterestadual: '0.12',
+        aliquotaInternaDestino: '0.18',
+        destinatarioContribuinte: false,
+      })
+      expect(r.fcp).toBeUndefined()
     })
 
     it('aceita Decimal como input', () => {
@@ -292,7 +311,7 @@ describe('calcDifal', () => {
       expect(baseStep!.value).toBe('14.88')
     })
 
-    it('com FECOP: step ALQ Interna Efetiva aparece primeiro', () => {
+    it('com FECOP: step ALQ Interna Efetiva + FCP separado no audit', () => {
       const r = calcDifal({
         valorOperacao: '1000',
         aliquotaInterestadual: '0.12',
@@ -302,7 +321,10 @@ describe('calcDifal', () => {
       })
       expect(r.audit[0].step).toBe('ALQ Interna Efetiva')
       expect(r.audit[0].value).toBe('0.2000')
-      expect(r.audit).toHaveLength(5)
+      const fcpStep = r.audit.find((s) => s.step === 'FCP')
+      expect(fcpStep).toBeDefined()
+      expect(fcpStep!.value).toBe('20.00')
+      expect(r.audit).toHaveLength(6)
     })
   })
 })

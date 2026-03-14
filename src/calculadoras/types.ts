@@ -23,6 +23,8 @@ export interface ResultadoSimples {
   imposto: Decimal
   base: Decimal
   aliquota: Decimal
+  /** FCP (Fundo de Combate à Pobreza) — presente apenas quando `fcp` é informado no input. */
+  fcp?: Decimal
   audit: AuditStep[]
 }
 
@@ -38,10 +40,14 @@ export interface ResultadoSt {
 
 /** Retorno de calcDifal(). */
 export interface ResultadoDifal {
+  /** DIFAL puro, sem FCP. Corresponde a vICMSUFDest no XML. */
   difal: Decimal
   icmsOrigem: Decimal
+  /** ICMS destino sem FCP. */
   icmsDestino: Decimal
   baseDifal: Decimal
+  /** FCP no DIFAL — presente apenas quando `fecop` é informado. Corresponde a vFCPUFDest no XML. */
+  fcp?: Decimal
   audit: AuditStep[]
 }
 
