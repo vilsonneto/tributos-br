@@ -29,6 +29,10 @@ import { Decimal, RoundingMode } from 'tributos-br/precision';
 
 Cada calculadora recebe um objeto tipado e retorna todos os campos exigidos pelo layout XML da NF-e (base de cálculo, valor do imposto, alíquota efetiva).
 
+## Mercados afetados
+
+O problema IEEE 754 afeta qualquer sistema que calcula preço unitário por divisão de embalagem: combustível, distribuidoras, grãos/commodities, farmacêutico, autopeças, bebidas, material de construção, químico/industrial, alimentício, têxtil. ERPs enterprise (SAP, Senior, TOTVS) documentam o problema em suas bases de conhecimento.
+
 ## Características técnicas
 
 - Zero dependências externas

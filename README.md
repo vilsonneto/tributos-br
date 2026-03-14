@@ -20,6 +20,10 @@
   <a href="https://codecov.io/gh/vilsonneto/tributos-br"><img src="https://codecov.io/gh/vilsonneto/tributos-br/graph/badge.svg" alt="Coverage"></a>
 </p>
 
+<p align="center">
+  <a href="https://tributos-br.vercel.app">tributos-br.vercel.app</a>
+</p>
+
 ---
 
 ## Por que tributos-br?
@@ -47,6 +51,25 @@ JavaScript usa IEEE 754 (ponto flutuante) para números. Isso causa erros silenc
 A SEFAZ rejeita NF-e com erros de validação 629/630 quando `vProd != vUnCom x qCom`. Esse drift de centavos é causado por arredondamento IEEE 754.
 
 O `tributos-br` resolve isso com aritmética em strings de precisão arbitrária. Toda operação é feita sobre dígitos decimais puros, sem conversão para `number` em nenhum ponto intermediário.
+
+---
+
+## Quem precisa disso
+
+Qualquer sistema que calcula preço unitário por divisão de embalagem e usa IEEE 754 está sujeito a rejeição 629. O problema afeta múltiplos mercados:
+
+| Mercado           | Exemplo de cálculo          | Resultado                          |
+| ----------------- | --------------------------- | ---------------------------------- |
+| **Combustível**   | R$ 5,799/L × 15L            | toFixed: "86.98", correto: "86.99" |
+| **Distribuidora** | Cx R$ 6,99 / 6un × 9un      | toFixed: "10.48", correto: "10.49" |
+| **Grãos**         | Saca R$ 50,10 / 60kg × 1kg  | toFixed: "0.83", correto: "0.84"   |
+| **Farmacêutico**  | Cx R$ 15,30 / 12un × 1un    | toFixed: "1.27", correto: "1.28"   |
+| **Autopeças**     | Kit R$ 20,30 / 4un × 7un    | toFixed: "35.52", correto: "35.53" |
+| **Bebidas**       | Cx R$ 20,10 / 12un × 7un    | toFixed: "11.72", correto: "11.73" |
+| **Construção**    | Barra R$ 11,10 / 12m × 19m  | toFixed: "17.57", correto: "17.58" |
+| **Químico**       | Bombona R$ 50,10 / 20L × 1L | toFixed: "2.50", correto: "2.51"   |
+
+ERPs enterprise já documentam o problema: SAP aumentou o campo vUnCom de 4 pra 10 casas decimais, Senior criou parâmetro para recalcular perda de precisão, TOTVS avisa sobre perda em cálculos encadeados.
 
 ---
 
