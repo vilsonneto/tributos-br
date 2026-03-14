@@ -716,11 +716,21 @@ describe('NF-e ground truth', () => {
       // Base IPI = vProd - vDesc = 537.38
       // NF-e: vBC = 537.38, pIPI = 15.0000%, vIPI = 80.62
       // Cálculo lib: 537.38 × 0.15 = 80.607 → HALF_UP 2 casas → 80.61
-      // NF-e diz 80.62 — divergência de R$ 0.01
-      // NOTA: este teste usa o valor da lib (80.61), não o da NF-e (80.62).
-      // A divergência está documentada e precisa ser investigada.
-      // Hipótese: Amazon calcula IPI por unidade (268.69 × 0.15 = 40.3035)
-      // com arredondamento diferente, depois multiplica por 2.
+      // NF-e diz 80.62 — divergência de R$ 0.01.
+      //
+      // Investigação (2026-03-14):
+      //   Cálculo sobre o total: 537.38 × 0.15 = 80.607 → HALF_UP → 80.61 (não bate)
+      //   Cálculo por unidade: 537.38 / 2 = 268.69, IPI = 268.69 × 0.15 = 40.3035
+      //     HALF_UP → 40.30 × 2 = 80.60 (não bate)
+      //     CEILING → 40.31 × 2 = 80.62 ✓
+      //
+      // Hipótese mais provável: Amazon calcula IPI por unidade com arredondamento
+      // CEILING (para cima), garantindo que o fisco nunca receba menos.
+      // A SEFAZ aceita ambos (tolerância R$ 0.01 para IPI).
+      // Aguardando segunda NF-e com IPI tributado para confirmar padrão.
+      //
+      // Teste usa valor da lib (HALF_UP sobre o total = 80.61).
+      // TODO(nfe-divergencia): vIPI 80.61 (lib) vs 80.62 (NF-e #7). Ver #76
       const r = calcIpi({ valorProduto: '537.38', aliquota: '0.15' })
 
       it('base IPI = vProd - vDesc', () => {
