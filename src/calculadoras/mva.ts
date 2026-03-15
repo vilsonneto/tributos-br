@@ -1,5 +1,6 @@
 import { Decimal } from '../precision/index.js'
 import type { AuditStep, DecimalInput, ResultadoMva } from './types.js'
+import { validarAliquota, validarDenominadorInternaFecop } from './validation.js'
 
 export interface CalcMvaAjustadaInput {
   /** MVA original do protocolo/convênio ICMS. Ex: 0.40 para 40%. */
@@ -39,6 +40,11 @@ export interface CalcMvaAjustadaInput {
  * // mvaAjustada ≈ 0.5024
  */
 export function calcMvaAjustada(input: CalcMvaAjustadaInput): ResultadoMva {
+  validarAliquota(input.aliquotaInterestadual, 'aliquotaInterestadual')
+  validarAliquota(input.aliquotaInterna, 'aliquotaInterna')
+  if (input.fecop != null) validarAliquota(input.fecop, 'fecop')
+  validarDenominadorInternaFecop(input.aliquotaInterna, input.fecop, 'calculo da MVA ajustada')
+
   const mvaOriginalDecimal = Decimal.from(input.mvaOriginal)
   const aliquotaInterestadual = Decimal.from(input.aliquotaInterestadual)
   const aliquotaInterna = Decimal.from(input.aliquotaInterna)

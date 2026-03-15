@@ -1,5 +1,6 @@
 import { Decimal } from '../precision/index.js'
 import type { AuditStep, DecimalInput, ResultadoSimples } from './types.js'
+import { validarAliquota, validarValorNaoNegativo, validarDenominadorIcms } from './validation.js'
 
 export interface CalcIcmsInput {
   valorProduto: DecimalInput
@@ -40,6 +41,11 @@ export interface CalcIcmsInput {
  * // → { base: ~1219.51, aliquota: 0.18, imposto: ~219.51 }
  */
 export function calcIcms(input: CalcIcmsInput): ResultadoSimples {
+  validarAliquota(input.aliquota, 'aliquota')
+  validarValorNaoNegativo(input.valorProduto, 'valorProduto')
+  validarDenominadorIcms(input.aliquota, input.incluirImpostoNaBase)
+  if (input.fcp != null) validarAliquota(input.fcp, 'fcp')
+
   const aliquota = Decimal.from(input.aliquota)
   let base = Decimal.from(input.valorProduto)
   const audit: AuditStep[] = []

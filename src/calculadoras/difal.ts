@@ -1,5 +1,11 @@
 import { Decimal } from '../precision/index.js'
 import type { AuditStep, DecimalInput, ResultadoDifal } from './types.js'
+import {
+  validarAliquota,
+  validarValorNaoNegativo,
+  validarBaseReduzidaSemContribuinte,
+  validarDenominadorInternaFecop,
+} from './validation.js'
 
 export interface CalcDifalInput {
   /** Valor da operação (base de referência para ICMS de origem). */
@@ -126,6 +132,19 @@ export interface CalcDifalInput {
  * // → { baseDifal: ~14.88, icmsOrigem: ~1.46, icmsDestino: ~2.68, difal: 1.22 }
  */
 export function calcDifal(input: CalcDifalInput): ResultadoDifal {
+  validarAliquota(input.aliquotaInterestadual, 'aliquotaInterestadual')
+  validarAliquota(input.aliquotaInternaDestino, 'aliquotaInternaDestino')
+  validarValorNaoNegativo(input.valorOperacao, 'valorOperacao')
+  if (input.fecop != null) validarAliquota(input.fecop, 'fecop')
+  validarBaseReduzidaSemContribuinte(input.baseReduzida, input.destinatarioContribuinte)
+  if (input.destinatarioContribuinte || input.baseReduzida === true) {
+    validarDenominadorInternaFecop(
+      input.aliquotaInternaDestino,
+      input.fecop,
+      'calculo da base DIFAL',
+    )
+  }
+
   const valorOperacao = Decimal.from(input.valorOperacao)
   const aliquotaInterestadual = Decimal.from(input.aliquotaInterestadual)
   const aliquotaInterna = Decimal.from(input.aliquotaInternaDestino)

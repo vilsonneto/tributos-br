@@ -1,5 +1,6 @@
 import { Decimal } from '../precision/index.js'
 import type { AuditStep, DecimalInput, ResultadoSimples } from './types.js'
+import { validarAliquota, validarValorNaoNegativo } from './validation.js'
 
 export interface CalcIpiInput {
   valorProduto: DecimalInput
@@ -18,6 +19,9 @@ export interface CalcIpiInput {
  * // → { base: 1000, aliquota: 0.10, imposto: 100 }
  */
 export function calcIpi(input: CalcIpiInput): ResultadoSimples {
+  validarAliquota(input.aliquota, 'aliquota')
+  validarValorNaoNegativo(input.valorProduto, 'valorProduto')
+
   const base = Decimal.from(input.valorProduto)
   const aliquota = Decimal.from(input.aliquota)
   const imposto = base.mul(aliquota)

@@ -26,3 +26,6 @@ export { calcCbs, calcIbs } from './cbs-ibs.js'
 
 export type { CalcPisInput, CalcCofinsInput } from './pis-cofins.js'
 export { calcPis, calcCofins } from './pis-cofins.js'
+
+export { TributoError, TributoErrorCode } from './errors.js'
+export type { TributoErrorDetails } from './errors.js'

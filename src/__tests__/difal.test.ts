@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { calcDifal } from '../calculadoras/difal.js'
 import { Decimal } from '../precision/index.js'
+import { TributoError } from '../calculadoras/errors.js'
 
 /**
  * Regra — base única (não-contribuinte):
@@ -184,23 +185,17 @@ describe('calcDifal', () => {
       expect(r.fcp!.toString()).toBe('0.31')
     })
 
-    it('base reduzida com destinatarioContribuinte: true é ignorado (usa base dupla)', () => {
-      // baseReduzida só se aplica quando destinatarioContribuinte = false
-      // Com true, segue o modo base dupla LC 190/2022
-      const comBaseReduzida = calcDifal({
-        valorOperacao: '12.20',
-        aliquotaInterestadual: '0.12',
-        aliquotaInternaDestino: '0.18',
-        destinatarioContribuinte: true,
-        baseReduzida: true,
-      })
-      const semBaseReduzida = calcDifal({
-        valorOperacao: '12.20',
-        aliquotaInterestadual: '0.12',
-        aliquotaInternaDestino: '0.18',
-        destinatarioContribuinte: true,
-      })
-      expect(comBaseReduzida.difal.toString()).toBe(semBaseReduzida.difal.toString())
+    it('base reduzida com destinatarioContribuinte: true lanca TributoError', () => {
+      // baseReduzida (CST 20) so se aplica a nao-contribuinte
+      expect(() =>
+        calcDifal({
+          valorOperacao: '12.20',
+          aliquotaInterestadual: '0.12',
+          aliquotaInternaDestino: '0.18',
+          destinatarioContribuinte: true,
+          baseReduzida: true,
+        }),
+      ).toThrow(TributoError)
     })
   })
 

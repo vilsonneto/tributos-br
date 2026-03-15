@@ -1,5 +1,6 @@
 import { Decimal } from '../precision/index.js'
 import type { AuditStep, DecimalInput, ResultadoSimples } from './types.js'
+import { validarAliquota, validarValorNaoNegativo } from './validation.js'
 
 export interface CalcPisInput {
   /** Base de cálculo do PIS. */
@@ -27,6 +28,9 @@ export interface CalcCofinsInput {
  * // → { base: 126.08, aliquota: 0.0165, imposto: 2.08 }
  */
 export function calcPis(input: CalcPisInput): ResultadoSimples {
+  validarAliquota(input.aliquota, 'aliquota')
+  validarValorNaoNegativo(input.base, 'base')
+
   const base = Decimal.from(input.base)
   const aliquota = Decimal.from(input.aliquota)
   const imposto = base.mul(aliquota)
@@ -55,6 +59,9 @@ export function calcPis(input: CalcPisInput): ResultadoSimples {
  * // → { base: 126.08, aliquota: 0.076, imposto: 9.58 }
  */
 export function calcCofins(input: CalcCofinsInput): ResultadoSimples {
+  validarAliquota(input.aliquota, 'aliquota')
+  validarValorNaoNegativo(input.base, 'base')
+
   const base = Decimal.from(input.base)
   const aliquota = Decimal.from(input.aliquota)
   const imposto = base.mul(aliquota)

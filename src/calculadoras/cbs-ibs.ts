@@ -1,5 +1,6 @@
 import { Decimal } from '../precision/index.js'
 import type { AuditStep, DecimalInput, ResultadoSimples } from './types.js'
+import { validarAliquota, validarValorNaoNegativo } from './validation.js'
 
 export interface CalcCbsInput {
   /** Base de cálculo da CBS. */
@@ -35,6 +36,9 @@ export interface CalcIbsInput {
  * // → { base: 1000, aliquota: 0.009, imposto: 9 }
  */
 export function calcCbs(input: CalcCbsInput): ResultadoSimples {
+  validarAliquota(input.aliquota, 'aliquota')
+  validarValorNaoNegativo(input.base, 'base')
+
   const base = Decimal.from(input.base)
   const aliquota = Decimal.from(input.aliquota)
   const imposto = base.mul(aliquota)
@@ -63,6 +67,9 @@ export function calcCbs(input: CalcCbsInput): ResultadoSimples {
  * // → { base: 1000, aliquota: 0.178, imposto: 178 }
  */
 export function calcIbs(input: CalcIbsInput): ResultadoSimples {
+  validarAliquota(input.aliquota, 'aliquota')
+  validarValorNaoNegativo(input.base, 'base')
+
   const base = Decimal.from(input.base)
   const aliquota = Decimal.from(input.aliquota)
   const imposto = base.mul(aliquota)

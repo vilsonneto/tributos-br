@@ -1,5 +1,10 @@
 import { Decimal } from '../precision/index.js'
 import type { AuditStep, DecimalInput, ResultadoSt } from './types.js'
+import {
+  validarAliquota,
+  validarValorNaoNegativo,
+  validarPautaComQuantidade,
+} from './validation.js'
 
 export interface CalcStInput {
   /** Valor de referência para cálculo do ICMS próprio (normalmente vBC do item). */
@@ -52,6 +57,15 @@ export interface CalcStInput {
  * // → { icmsProprio: 120, baseSt: 1400, icmsSt: 132 }
  */
 export function calcSt(input: CalcStInput): ResultadoSt {
+  validarAliquota(input.aliquotaIcms, 'aliquotaIcms')
+  validarAliquota(input.aliquotaSt, 'aliquotaSt')
+  validarValorNaoNegativo(input.baseIcms, 'baseIcms')
+  if (input.valorIpi != null) validarValorNaoNegativo(input.valorIpi, 'valorIpi')
+  if (input.reducaoBase != null) validarAliquota(input.reducaoBase, 'reducaoBase')
+  if (input.reducaoBaseSt != null) validarAliquota(input.reducaoBaseSt, 'reducaoBaseSt')
+  if (input.fecop != null) validarAliquota(input.fecop, 'fecop')
+  validarPautaComQuantidade(input.pautaFiscal, input.quantidade)
+
   const baseIcmsDecimal = Decimal.from(input.baseIcms)
   const aliquotaIcms = Decimal.from(input.aliquotaIcms)
   const mva = Decimal.from(input.mva)
