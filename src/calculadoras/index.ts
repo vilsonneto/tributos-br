@@ -23,3 +23,6 @@ export { calcDifal } from './difal.js'
 
 export type { CalcCbsInput, CalcIbsInput } from './cbs-ibs.js'
 export { calcCbs, calcIbs } from './cbs-ibs.js'
+
+export type { CalcPisInput, CalcCofinsInput } from './pis-cofins.js'
+export { calcPis, calcCofins } from './pis-cofins.js'
