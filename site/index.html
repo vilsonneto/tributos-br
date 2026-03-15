@@ -1825,6 +1825,13 @@
               </div>
             </div>
             <div class="feat-card">
+              <div class="feat-title">PIS / COFINS</div>
+              <div class="feat-desc">
+                Cálculo por fora. Regime cumulativo (0,65% / 3%) e não cumulativo (1,65% / 7,6%).
+                Alíquota via parâmetro. Ground truth com 6 NF-e reais.
+              </div>
+            </div>
+            <div class="feat-card">
               <div class="feat-title">
                 CBS / IBS
                 <span class="feat-tag feat-tag-new">2026</span>
@@ -2353,6 +2360,44 @@ Decimal.max(<span class="str">'100'</span>, <span class="str">'200'</span>)     
             GitHub
           </a>
         </div>
+      </div>
+    </section>
+
+    <!-- ESCOPO -->
+    <section class="section" id="escopo" style="border-top: 1px solid rgba(255,255,255,0.06)">
+      <div class="fade-in">
+        <div class="section-label" style="color: var(--slate)">Transparência</div>
+        <h2>Escopo e limitações</h2>
+        <p>
+          A lib cobre cálculos validados contra
+          <strong>9 NF-e reais aceitas pela SEFAZ</strong> (cStat 100), com foco em
+          e-commerce B2C interestadual. Cenários fora do ground truth seguem a legislação
+          mas não foram confrontados com documentos reais.
+        </p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px">
+          <div>
+            <div style="font-weight: 700; margin-bottom: 8px; color: var(--verde)">O que a lib cobre</div>
+            <ul style="list-style: none; padding: 0; font-size: 15px; color: var(--slate); line-height: 1.8">
+              <li>ICMS, IPI, ST, DIFAL, MVA, PIS, COFINS, CBS, IBS</li>
+              <li>Precisão arbitrária sem IEEE 754</li>
+              <li>Audit trail de cada etapa</li>
+              <li>362+ testes, 95% cobertura</li>
+            </ul>
+          </div>
+          <div>
+            <div style="font-weight: 700; margin-bottom: 8px; color: var(--red)">Fora do escopo atual</div>
+            <ul style="list-style: none; padding: 0; font-size: 15px; color: var(--slate); line-height: 1.8">
+              <li>Roteamento fiscal por CST/CSOSN</li>
+              <li>ISS (municipal)</li>
+              <li>Tabelas de alíquota</li>
+              <li>Geração de XML de NF-e</li>
+            </ul>
+          </div>
+        </div>
+        <p style="margin-top: 16px; font-size: 14px; color: var(--slate)">
+          Detalhes completos no
+          <a href="https://github.com/vilsonneto/tributos-br#escopo-e-limitações" target="_blank" rel="noopener" style="color: var(--verde)">README</a>.
+        </p>
       </div>
     </section>
 
