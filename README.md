@@ -421,6 +421,16 @@ Os testes são derivados da legislação vigente e de exemplos oficiais. Valores
 
 ---
 
+## Alternativas
+
+Até onde sabemos, tributos-br é a única lib JavaScript/TypeScript ativa para cálculo tributário brasileiro com aritmética de precisão arbitrária, audit trail e ground truth validado contra NF-e reais.
+
+Existem ports de bibliotecas fiscais de outras linguagens (C#, Delphi) para JS/TS, mas nenhum com manutenção ativa ou cobertura de testes equivalente. Se você conhece outra lib nesse espaço, abre uma issue, a gente adiciona aqui.
+
+Para precisão decimal genérica (sem calculadoras fiscais): [decimal.js](https://github.com/MikeMcl/decimal.js), [big.js](https://github.com/MikeMcl/big.js), [bignumber.js](https://github.com/MikeMcl/bignumber.js).
+
+---
+
 ## Aviso legal
 
 Esta biblioteca é fornecida "como está", sem garantias de qualquer tipo. Os cálculos são validados contra NF-e reais e legislação vigente, mas **não substituem consultoria contábil ou fiscal**. O autor não se responsabiliza por perdas decorrentes do uso em produção. Valide os resultados com seu contador antes de emitir documentos fiscais.
