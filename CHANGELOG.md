@@ -1,5 +1,27 @@
 # tributos-br
 
+## 1.3.0
+
+### Minor Changes
+
+- Implementar `calcPis()` e `calcCofins()` — calculadoras PIS e COFINS
+
+  Calculadas "por fora" sobre a base informada, com aliquota fornecida pelo chamador
+  (varia por regime: nao cumulativo PIS 1,65%/COFINS 7,60%, cumulativo PIS 0,65%/COFINS 3%).
+
+  Validadas contra 6 NF-e reais (cStat 100) com 27 testes de ground truth.
+  Audit trail de 2 steps (Base + Imposto), mesmo padrao de CBS/IBS/IPI.
+
+  ```ts
+  import { calcPis, calcCofins } from 'tributos-br'
+
+  const pis = calcPis({ base: '126.08', aliquota: '0.0165' })
+  pis.imposto.toMoney().toString() // '2.08'
+
+  const cofins = calcCofins({ base: '126.08', aliquota: '0.076' })
+  cofins.imposto.toMoney().toString() // '9.58'
+  ```
+
 ## 1.2.0
 
 ### Minor Changes
