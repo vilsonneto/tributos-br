@@ -128,10 +128,38 @@ Todas as funções recebem e retornam valores como `Decimal`, nunca `number`. Us
 | `calcMvaAjustada()` | MVA ajustada interestadual (com FECOP)        |
 | `calcSt()`          | ICMS-ST unificada (5 cenários via parâmetros) |
 | `calcDifal()`       | DIFAL base única + dupla + reduzida (CST 20)  |
+| `calcPis()`         | PIS (cumulativo e não cumulativo)             |
+| `calcCofins()`      | COFINS (cumulativo e não cumulativo)          |
 | `calcCbs()`         | CBS (reforma tributária, LC 214/2025)         |
 | `calcIbs()`         | IBS (reforma tributária, LC 214/2025)         |
 
 Todas as funções são puras, recebem parâmetros (nunca hardcode de alíquotas), retornam objeto com breakdown dos cálculos + audit trail, e usam `Decimal` internamente com arredondamento HALF_UP (padrão SEFAZ).
+
+---
+
+## Escopo e limitações
+
+O tributos-br cobre cálculos tributários com precisão validada contra NF-e reais. É importante saber o que está e o que não está coberto.
+
+**O que a lib faz bem:**
+
+- Cálculo de ICMS, IPI, ST, DIFAL, MVA, PIS, COFINS, CBS e IBS com precisão arbitrária
+- Audit trail de cada etapa intermediária
+- Ground truth validado contra 9 NF-e reais aceitas pela SEFAZ (cStat 100)
+- Cobertura focada em e-commerce B2C (operações interestaduais para consumidor final)
+
+**O que a lib NÃO faz (ainda):**
+
+- Roteamento fiscal por CST/CSOSN (qual tributo aplicar em cada operação)
+- PIS/COFINS não cumulativo com créditos (a lib calcula o débito, não o crédito)
+- ST com pauta fiscal estadual (sem ground truth B2B)
+- DIFAL contribuinte (sem NF-e B2B para validar)
+- Monofasia, alíquota zero, isenção (cenários de exceção por NCM/CEST)
+- ISS (municipal, regras por município)
+- Tabelas de alíquota (a lib recebe como parâmetro, não mantém tabelas)
+- Geração de XML de NF-e
+
+**Cobertura estimada:** a lib calcula corretamente os tributos para os cenários validados pelo ground truth. Para cenários fora do ground truth (ST com pauta, DIFAL contribuinte, operações B2B), os cálculos seguem a legislação mas não foram confrontados com NF-e reais. Valide com seu contador.
 
 ---
 
