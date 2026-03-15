@@ -1431,7 +1431,7 @@
         </div>
         <p class="hero-tagline">
           Precisão decimal arbitrária para NF-e em JavaScript e TypeScript.<br />
-          7 calculadores. Audit trail. Zero dependências.<br />
+          9 calculadoras. Audit trail. Zero dependências.<br />
           <strong>A SEFAZ não rejeita.</strong><br />
           <span style="font-size: 12px; color: var(--slate); margin-top: 4px; display: inline-block"
             >Construído por quem já debugou rejeição 629 em produção.</span
@@ -1559,6 +1559,48 @@
               <div class="ps-label">já causa rejeição</div>
             </div>
           </div>
+        </div>
+      </section>
+
+      <!-- QUANTO CUSTA ERRAR (movido pra cá: Problema > Custo > Solução) -->
+      <section class="problem-gate" id="impacto" style="padding: 60px 24px">
+        <div class="problem-inner fade-in">
+          <div class="section-label" style="color: var(--amarelo)">Quanto custa errar</div>
+          <h2 style="color: var(--amarelo)">Centavos por operação. Milhares por mês.</h2>
+          <p
+            style="
+              color: var(--slate-light);
+              font-size: 15px;
+              line-height: 1.8;
+              margin-bottom: 32px;
+            "
+          >
+            O erro não parece grande em uma nota. Mas se repete em todas.
+          </p>
+          <div class="problem-stat">
+            <div class="ps-item">
+              <div class="ps-num" style="color: var(--amarelo)">R$ 13,17</div>
+              <div class="ps-label">
+                DIFAL: diferença por operação entre base única e base dupla
+              </div>
+            </div>
+            <div class="ps-item">
+              <div class="ps-num" style="color: var(--amarelo)">R$ 58,83</div>
+              <div class="ps-label">
+                ST vs antecipação: diferença por operação quando confunde o regime
+              </div>
+            </div>
+            <div class="ps-item">
+              <div class="ps-num" style="color: var(--red)">R$ 29.415</div>
+              <div class="ps-label">
+                por mês, em 500 operações interestaduais com o método errado
+              </div>
+            </div>
+          </div>
+          <p style="color: var(--slate); font-size: 13px; line-height: 1.7; margin-top: 24px">
+            Valores calculados com operação interestadual de R$ 1.000, alíquota inter 12%, interna
+            18%, MVA 40%.
+          </p>
         </div>
       </section>
 
@@ -2058,47 +2100,6 @@ Decimal.max(<span class="str">'100'</span>, <span class="str">'200'</span>)     
       </section>
 
       <!-- IMPACTO FINANCEIRO -->
-      <section class="problem-gate" id="impacto" style="padding: 60px 24px">
-        <div class="problem-inner fade-in">
-          <div class="section-label" style="color: var(--amarelo)">Quanto custa errar</div>
-          <h2 style="color: var(--amarelo)">Centavos por operação. Milhares por mês.</h2>
-          <p
-            style="
-              color: var(--slate-light);
-              font-size: 15px;
-              line-height: 1.8;
-              margin-bottom: 32px;
-            "
-          >
-            O erro não parece grande em uma nota. Mas se repete em todas.
-          </p>
-          <div class="problem-stat">
-            <div class="ps-item">
-              <div class="ps-num" style="color: var(--amarelo)">R$ 13,17</div>
-              <div class="ps-label">
-                DIFAL: diferença por operação entre base única e base dupla
-              </div>
-            </div>
-            <div class="ps-item">
-              <div class="ps-num" style="color: var(--amarelo)">R$ 58,83</div>
-              <div class="ps-label">
-                ST vs antecipação: diferença por operação quando confunde o regime
-              </div>
-            </div>
-            <div class="ps-item">
-              <div class="ps-num" style="color: var(--red)">R$ 29.415</div>
-              <div class="ps-label">
-                por mês, em 500 operações interestaduais com o método errado
-              </div>
-            </div>
-          </div>
-          <p style="color: var(--slate); font-size: 13px; line-height: 1.7; margin-top: 24px">
-            Valores calculados com operação interestadual de R$ 1.000, alíquota inter 12%, interna
-            18%, MVA 40%.
-          </p>
-        </div>
-      </section>
-
       <!-- DIFERENCIAIS -->
       <section class="section" id="diferenciais">
         <div class="fade-in">
@@ -2174,6 +2175,20 @@ Decimal.max(<span class="str">'100'</span>, <span class="str">'200'</span>)     
                 </div>
               </div>
             </li>
+            <li>
+              <div class="diff-item">
+                <div class="diff-num">6</div>
+                <div>
+                  <div class="diff-title">Compatível com o que você já usa</div>
+                  <div class="diff-desc">
+                    Já usa decimal.js, big.js ou bignumber.js? tributos-br aceita os valores via
+                    <code style="font-family: var(--mono); font-size: 12px">.toString()</code>. Não
+                    precisa trocar sua lib de precisão. Única lib TypeScript ativa para cálculo
+                    tributário brasileiro com precisão arbitrária e audit trail.
+                  </div>
+                </div>
+              </div>
+            </li>
           </ul>
         </div>
       </section>
@@ -2189,8 +2204,8 @@ Decimal.max(<span class="str">'100'</span>, <span class="str">'200'</span>)     
               <div class="stat-label">dependências</div>
             </div>
             <div class="stat-card">
-              <div class="stat-value">7</div>
-              <div class="stat-label">calculadores</div>
+              <div class="stat-value">9</div>
+              <div class="stat-label">calculadoras</div>
             </div>
             <div class="stat-card">
               <div class="stat-value">95%+</div>
@@ -2299,71 +2314,7 @@ Decimal.max(<span class="str">'100'</span>, <span class="str">'200'</span>)     
       </section>
     </main>
 
-    <!-- FINAL CTA -->
-    <section class="final-cta-section">
-      <div class="final-cta-inner fade-in">
-        <div class="section-label" style="color: var(--verde); text-align: center">
-          Instale agora
-        </div>
-        <h2
-          style="
-            color: #fff;
-            font-size: clamp(26px, 4vw, 38px);
-            font-weight: 800;
-            margin-bottom: 12px;
-          "
-        >
-          Se seu sistema emite NF-e, cada centavo importa.
-        </h2>
-        <p
-          style="color: var(--slate-light); font-size: 15px; line-height: 1.8; margin-bottom: 28px"
-        >
-          7 calculadores com precisão decimal arbitrária e audit trail. Zero dependências. Instale e
-          esqueça rejeições 629/630.
-        </p>
-        <div
-          style="
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-          "
-        >
-          <button class="cta-install" onclick="copyInstall('npm install tributos-br')">
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-            </svg>
-            npm install tributos-br
-          </button>
-          <a
-            href="https://github.com/vilsonneto/tributos-br"
-            target="_blank"
-            rel="noopener"
-            class="cta-github"
-          >
-            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
-              <path
-                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
-              />
-            </svg>
-            GitHub
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ESCOPO -->
+    <!-- ESCOPO (antes do CTA final, para não sabotar conversão) -->
     <section class="section" id="escopo" style="border-top: 1px solid rgba(255, 255, 255, 0.06)">
       <div class="fade-in">
         <div class="section-label" style="color: var(--slate)">Transparência</div>
@@ -2424,6 +2375,70 @@ Decimal.max(<span class="str">'100'</span>, <span class="str">'200'</span>)     
             >README</a
           >.
         </p>
+      </div>
+    </section>
+
+    <!-- FINAL CTA (depois do escopo, último antes do footer) -->
+    <section class="final-cta-section">
+      <div class="final-cta-inner fade-in">
+        <div class="section-label" style="color: var(--verde); text-align: center">
+          Instale agora
+        </div>
+        <h2
+          style="
+            color: #fff;
+            font-size: clamp(26px, 4vw, 38px);
+            font-weight: 800;
+            margin-bottom: 12px;
+          "
+        >
+          Se seu sistema emite NF-e, cada centavo importa.
+        </h2>
+        <p
+          style="color: var(--slate-light); font-size: 15px; line-height: 1.8; margin-bottom: 28px"
+        >
+          9 calculadoras com precisão decimal arbitrária e audit trail. Zero dependências. Instale e
+          esqueça rejeições 629/630.
+        </p>
+        <div
+          style="
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+          "
+        >
+          <button class="cta-install" onclick="copyInstall('npm install tributos-br')">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+            </svg>
+            npm install tributos-br
+          </button>
+          <a
+            href="https://github.com/vilsonneto/tributos-br"
+            target="_blank"
+            rel="noopener"
+            class="cta-github"
+          >
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+              <path
+                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+              />
+            </svg>
+            GitHub
+          </a>
+        </div>
       </div>
     </section>
 
