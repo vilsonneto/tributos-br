@@ -13,8 +13,7 @@
  * @module
  */
 import type { DecimalInternal } from './types.js'
-
-const ZERO: DecimalInternal = { sign: 1, digits: '0', exponent: 0 }
+import { ZERO, normalize } from './internal.js'
 
 // ─── Helpers de strings de dígitos ──────────────────────────────────────
 
@@ -122,27 +121,6 @@ function divideDigits(
   const exponent = a.length - padded.length
 
   return { digits: quotient, exponent }
-}
-
-// ─── Normalização ───────────────────────────────────────────────────────
-
-function normalize(sign: 1 | -1, digits: string, exponent: number): DecimalInternal {
-  // Remover leading zeros
-  const stripped = digits.replace(/^0+/, '') || '0'
-
-  if (stripped === '0') return ZERO
-
-  // Remover trailing zeros e ajustar expoente
-  const trailing = stripped.match(/0+$/)
-  if (trailing) {
-    return {
-      sign,
-      digits: stripped.slice(0, -trailing[0].length),
-      exponent: exponent + trailing[0].length,
-    }
-  }
-
-  return { sign, digits: stripped, exponent }
 }
 
 // ─── Operações públicas ─────────────────────────────────────────────────

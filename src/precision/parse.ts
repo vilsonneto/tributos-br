@@ -9,8 +9,7 @@
  * @module
  */
 import type { DecimalInput, DecimalInternal } from './types.js'
-
-const ZERO_INTERNAL: DecimalInternal = { sign: 1, digits: '0', exponent: 0 }
+import { ZERO as ZERO_INTERNAL } from './internal.js'
 
 /**
  * Converte uma entrada (string, number ou objeto com toString()) para DecimalInternal.

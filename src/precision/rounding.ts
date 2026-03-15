@@ -1,7 +1,6 @@
 import type { DecimalInternal } from './types.js'
 import { RoundingMode } from './types.js'
-
-const ZERO: DecimalInternal = { sign: 1, digits: '0', exponent: 0 }
+import { ZERO, normalize } from './internal.js'
 
 /**
  * Arredonda um DecimalInternal para o número especificado de casas decimais.
@@ -131,22 +130,4 @@ function incrementDigits(digits: string): string {
   }
 
   return chars.join('')
-}
-
-/** Normaliza removendo trailing zeros */
-function normalize(sign: 1 | -1, digits: string, exponent: number): DecimalInternal {
-  const stripped = digits.replace(/^0+/, '') || '0'
-
-  if (stripped === '0') return ZERO
-
-  const trailing = stripped.match(/0+$/)
-  if (trailing) {
-    return {
-      sign,
-      digits: stripped.slice(0, -trailing[0].length),
-      exponent: exponent + trailing[0].length,
-    }
-  }
-
-  return { sign, digits: stripped, exponent }
 }
