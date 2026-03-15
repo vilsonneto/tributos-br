@@ -421,6 +421,12 @@ Os testes são derivados da legislação vigente e de exemplos oficiais. Valores
 
 ---
 
+## Aviso legal
+
+Esta biblioteca é fornecida "como está", sem garantias de qualquer tipo. Os cálculos são validados contra NF-e reais e legislação vigente, mas **não substituem consultoria contábil ou fiscal**. O autor não se responsabiliza por perdas decorrentes do uso em produção. Valide os resultados com seu contador antes de emitir documentos fiscais.
+
+---
+
 ## Licença
 
 [MIT](./LICENSE)
