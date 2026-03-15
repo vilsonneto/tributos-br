@@ -137,6 +137,24 @@ Todas as funções são puras, recebem parâmetros (nunca hardcode de alíquotas
 
 ---
 
+## Interoperabilidade com outras libs
+
+Se o seu projeto já usa `decimal.js`, `big.js` ou `bignumber.js`, o tributos-br aceita os valores diretamente. Internamente, o parse converte via `.toString()`, preservando a precisão:
+
+```ts
+import DecimalJS from 'decimal.js'
+import { Decimal } from 'tributos-br/precision'
+
+const preco = new DecimalJS('1.064')
+const resultado = Decimal.from(preco.toString()).mul('39680')
+
+resultado.toFixed(2) // '42219.52' — exato
+```
+
+Não é necessário abandonar libs existentes para usar tributos-br. A camada de precisão é independente e aceita `string`, `number` ou qualquer objeto com `.toString()`.
+
+---
+
 ## Escopo e limitações
 
 O tributos-br cobre cálculos tributários com precisão validada contra NF-e reais. É importante saber o que está e o que não está coberto.
