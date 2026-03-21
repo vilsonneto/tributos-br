@@ -74,7 +74,25 @@ Se você está propondo uma correção ou nova fórmula:
 
 6. **Precisão decimal** — use a classe `Decimal` para todos os cálculos. Nunca use `number` do JavaScript para valores monetários ou alíquotas.
 
-Veja também: [ADR-002 — Estratégia de validação de cálculos fiscais](docs/adr/002-estrategia-de-validacao-fiscal.md)
+Veja tambem: [ADR-002 — Estrategia de validacao de calculos fiscais](docs/adr/002-estrategia-de-validacao-fiscal.md)
+
+## Onde colocar cada tipo de teste
+
+O projeto tem tres niveis de teste organizados por nivel de confianca (veja [ADR-003](docs/adr/003-tres-niveis-de-teste.md)):
+
+| Nivel                  | Arquivo                          | Quando usar                                                                                                            |
+| ---------------------- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **E2E fiscal**         | `nfe-ground-truth.test.ts`       | Tem XML real de NF-e (cStat 100). Nota inteira, todos os tributos juntos. Nunca fatiar por calculadora.                |
+| **Conformidade SEFAZ** | `sefaz-validation-rules.test.ts` | Quer validar que o output nao viola rejeicoes da SEFAZ (528, 529, 530, 534, 536).                                      |
+| **Unitario**           | `[calculadora].test.ts`          | Formula isolada, edge case, validacao de input. Se o caso vem de documento normativo, use prefixo `[MOC]` no describe. |
+
+Hierarquia de confianca (quem vence em conflito): **Legislacao > NT SEFAZ > NF-e real > Unitario.**
+
+Cada arquivo de teste tem um header no topo explicando o que pertence e o que nao pertence. Leia o header antes de adicionar testes.
+
+### Tolerancias de arredondamento SEFAZ
+
+A SEFAZ aceita tolerancia de R$0.01 em campos calculados (vICMS, vIPI, vPIS, vCOFINS, vICMSST). Validacao e por item, nao por nota. Calcule com precisao maxima usando a classe `Decimal` e arredonde apenas no resultado final.
 
 ## Branches
 
