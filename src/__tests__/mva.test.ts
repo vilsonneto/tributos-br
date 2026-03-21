@@ -3,12 +3,17 @@ import { calcMvaAjustada } from '../calculadoras/mva.js'
 import { Decimal } from '../precision/index.js'
 
 /**
- * Regra EC 87/2015:
- * aliqInternaEfetiva = aliquotaInterna + (fecop ?? 0)
- * mvaAjustada = ((1 + mvaOriginal) × (1 − aliquotaInterestadual)) ÷ (1 − aliqInternaEfetiva) − 1
+ * Testes unitarios — calcMvaAjustada
  *
- * Sem FECOP: aliqInternaEfetiva = aliquotaInterna
- * Com FECOP: aliqInternaEfetiva = aliquotaInterna + fecop
+ * Logica interna, edge cases, validacao de input, regressoes.
+ * Exemplos pontuais de MOC/legislacao usam prefixo [MOC] no describe.
+ *
+ * NF-e real NUNCA vai aqui. Use nfe-ground-truth.test.ts (nota inteira).
+ * Regras de validacao SEFAZ NUNCA vao aqui. Use sefaz-validation-rules.test.ts.
+ *
+ * Regra EC 87/2015:
+ *   aliqInternaEfetiva = aliquotaInterna + (fecop ?? 0)
+ *   mvaAjustada = ((1 + mvaOriginal) x (1 - aliquotaInterestadual)) / (1 - aliqInternaEfetiva) - 1
  */
 describe('calcMvaAjustada', () => {
   it('MVA 40%, inter 12%, interna 18% → mvaAjustada arredondada a 4 casas', () => {

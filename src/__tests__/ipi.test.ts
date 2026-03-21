@@ -3,8 +3,15 @@ import { calcIpi } from '../calculadoras/ipi.js'
 import { Decimal } from '../precision/index.js'
 
 /**
- * Regra: IPI sempre por fora → imposto = valorProduto × aliquota
- * base = valorProduto (sem modificação)
+ * Testes unitarios — calcIpi
+ *
+ * Logica interna, edge cases, validacao de input, regressoes.
+ * Exemplos pontuais de MOC/legislacao usam prefixo [MOC] no describe.
+ *
+ * NF-e real NUNCA vai aqui. Use nfe-ground-truth.test.ts (nota inteira).
+ * Regras de validacao SEFAZ NUNCA vao aqui. Use sefaz-validation-rules.test.ts.
+ *
+ * Regra: IPI sempre por fora. imposto = valorProduto x aliquota.
  */
 describe('calcIpi', () => {
   it('1000 × 0.10 = 100', () => {

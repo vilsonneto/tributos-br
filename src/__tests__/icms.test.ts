@@ -3,11 +3,19 @@ import { calcIcms } from '../calculadoras/icms.js'
 import { Decimal } from '../precision/index.js'
 
 /**
- * Regra: ICMS por fora → imposto = valorProduto × aliquota
- * Regra: ICMS por dentro → base = valorProduto ÷ (1 − aliquota), imposto = base × aliquota
+ * Testes unitarios — calcIcms
  *
- * O retorno é { imposto, base, aliquota } — todos Decimal, sem arredondamento aplicado.
- * Arredondar é responsabilidade de quem chama (toMoney para campos SEFAZ).
+ * Logica interna, edge cases, validacao de input, regressoes.
+ * Exemplos pontuais de MOC/legislacao usam prefixo [MOC] no describe
+ * e citam documento + secao de origem.
+ *
+ * NF-e real NUNCA vai aqui. Use nfe-ground-truth.test.ts (nota inteira).
+ * Regras de validacao SEFAZ NUNCA vao aqui. Use sefaz-validation-rules.test.ts.
+ *
+ * Regras do calcIcms:
+ *   ICMS por fora: imposto = valorProduto x aliquota
+ *   ICMS por dentro: base = valorProduto / (1 - aliquota), imposto = base x aliquota
+ *   Retorno: { imposto, base, aliquota } — todos Decimal, sem arredondamento.
  */
 describe('calcIcms', () => {
   describe('por fora (default)', () => {

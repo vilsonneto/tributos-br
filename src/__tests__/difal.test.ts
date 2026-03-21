@@ -4,12 +4,20 @@ import { Decimal } from '../precision/index.js'
 import { TributoError } from '../calculadoras/errors.js'
 
 /**
- * Regra — base única (não-contribuinte):
- *   icmsOrigem  = valorOperacao × aliquotaInterestadual
+ * Testes unitarios — calcDifal
+ *
+ * Logica interna, edge cases, validacao de input, regressoes.
+ * Exemplos pontuais de MOC/legislacao usam prefixo [MOC] no describe.
+ *
+ * NF-e real NUNCA vai aqui. Use nfe-ground-truth.test.ts (nota inteira).
+ * Regras de validacao SEFAZ NUNCA vao aqui. Use sefaz-validation-rules.test.ts.
+ *
+ * Regra base unica (nao-contribuinte):
+ *   icmsOrigem  = valorOperacao x aliquotaInterestadual
  *   baseDifal   = valorOperacao
- *   icmsDestino = baseDifal × aliquotaInternaDestino
- *   fcp         = baseDifal × fecop          (quando informado)
- *   difal       = icmsDestino − icmsOrigem   (sem FCP)
+ *   icmsDestino = baseDifal x aliquotaInternaDestino
+ *   fcp         = baseDifal x fecop          (quando informado)
+ *   difal       = icmsDestino - icmsOrigem   (sem FCP)
  *
  * Regra — base dupla (contribuinte, LC 190/2022):
  *   icmsOrigem  = valorOperacao × aliquotaInterestadual

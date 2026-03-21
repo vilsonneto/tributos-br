@@ -3,12 +3,18 @@ import { calcPis, calcCofins } from '../calculadoras/pis-cofins.js'
 import { Decimal } from '../precision/index.js'
 
 /**
- * PIS: imposto = base × alíquota (por fora)
- * COFINS: imposto = base × alíquota (por fora)
+ * Testes unitarios — calcPis / calcCofins
  *
- * Alíquotas padrão (regime não cumulativo): PIS 1,65%, COFINS 7,60%.
- * Alíquotas regime cumulativo: PIS 0,65%, COFINS 3%.
- * Alíquota é informada pelo chamador.
+ * Logica interna, edge cases, validacao de input, regressoes.
+ * Exemplos pontuais de MOC/legislacao usam prefixo [MOC] no describe.
+ *
+ * NF-e real NUNCA vai aqui. Use nfe-ground-truth.test.ts (nota inteira).
+ * Regras de validacao SEFAZ NUNCA vao aqui. Use sefaz-validation-rules.test.ts.
+ *
+ * PIS: imposto = base x aliquota (por fora)
+ * COFINS: imposto = base x aliquota (por fora)
+ * Aliquotas padrao nao-cumulativo: PIS 1,65%, COFINS 7,60%.
+ * Aliquotas regime cumulativo: PIS 0,65%, COFINS 3%.
  */
 
 // ─── calcPis ────────────────────────────────────────────────────────────────

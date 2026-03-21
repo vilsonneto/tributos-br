@@ -6,16 +6,20 @@ import { calcCbs, calcIbs } from '../calculadoras/cbs-ibs.js'
 import { Decimal } from '../precision/index.js'
 
 /**
- * Testes de ground truth — NF-e reais aceitas pela SEFAZ autorizadora.
+ * E2E fiscal — NF-e reais aceitas pela SEFAZ autorizadora (cStat 100).
  *
- * Cada caso de teste é rastreável a um documento fiscal autorizado (cStat 100).
- * Os valores esperados são extraídos diretamente do XML da NF-e, não da
- * legislação ou da implementação. Conforme ADR-002, esses testes só mudam
+ * Cada NF-e e testada INTEIRA: ICMS, IPI, PIS, COFINS, DIFAL, CBS, IBS,
+ * todos os tributos presentes no documento. Nunca fatiar NF-e por calculadora.
+ *
+ * Os valores esperados sao extraidos diretamente do XML da NF-e, nao da
+ * legislacao ou da implementacao. Conforme ADR-002, esses testes so mudam
  * quando a lei muda.
  *
- * Limitação atual: a lib não possui calculadoras de PIS e COFINS.
- * Os valores de PIS/COFINS da NF-e estão documentados nos comentários
- * para implementação futura, mas não são testados.
+ * Regras para contribuidores:
+ *   - Nunca ajustar valores pra "passar". O esperado e a NF-e.
+ *   - Divergencia legitima? Documentar com TODO(nfe-divergencia) e abrir issue.
+ *   - Dados inventados NUNCA vao aqui. Use o arquivo unitario da calculadora.
+ *   - Cada describe cita chave de acesso e protocolo da NF-e.
  */
 
 // ---------------------------------------------------------------------------

@@ -3,14 +3,23 @@ import { calcSt } from '../calculadoras/st.js'
 import { Decimal } from '../precision/index.js'
 
 /**
- * Regra ICMS-ST:
- * 1. baseIcmsEfetiva = baseIcms × (1 − reducaoBase)  [ou baseIcms se sem redução]
- * 2. icmsProprio = baseIcmsEfetiva × aliquotaIcms
- * 3. baseStMva = (baseIcms + valorIpi) × (1 + mva)   [usa baseIcms original, não reduzida]
- * 4. baseSt = MAX(baseStMva, pautaFiscal × quantidade) [ou baseStMva se sem pauta]
- * 5. baseStEfetiva = baseSt × (1 − reducaoBaseSt)     [ou baseSt se sem redução ST]
- * 6. aliquotaStEfetiva = aliquotaSt + (fecop ?? 0)
- * 7. icmsSt = baseStEfetiva × aliquotaStEfetiva − icmsProprio
+ * Testes unitarios — calcSt
+ *
+ * Logica interna, edge cases, validacao de input, regressoes.
+ * Exemplos pontuais de MOC/legislacao usam prefixo [MOC] no describe
+ * e citam documento + secao de origem.
+ *
+ * NF-e real NUNCA vai aqui. Use nfe-ground-truth.test.ts (nota inteira).
+ * Regras de validacao SEFAZ NUNCA vao aqui. Use sefaz-validation-rules.test.ts.
+ *
+ * Regras do calcSt:
+ *   1. baseIcmsEfetiva = baseIcms x (1 - reducaoBase)
+ *   2. icmsProprio = baseIcmsEfetiva x aliquotaIcms
+ *   3. baseStMva = (baseIcms + valorIpi) x (1 + mva)
+ *   4. baseSt = MAX(baseStMva, pautaFiscal x quantidade)
+ *   5. baseStEfetiva = baseSt x (1 - reducaoBaseSt)
+ *   6. aliquotaStEfetiva = aliquotaSt + (fecop ?? 0)
+ *   7. icmsSt = baseStEfetiva x aliquotaStEfetiva - icmsProprio
  */
 describe('calcSt', () => {
   describe('caso base', () => {

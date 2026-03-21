@@ -3,11 +3,17 @@ import { calcCbs, calcIbs } from '../calculadoras/cbs-ibs.js'
 import { Decimal } from '../precision/index.js'
 
 /**
- * Regra CBS (LC 214/2025, substitui PIS/COFINS): imposto = base × aliquota
- * Regra IBS (LC 214/2025, substitui ICMS/ISS): imposto = base × aliquota
+ * Testes unitarios — calcCbs / calcIbs
  *
- * Alíquotas não são hardcoded — estão em transição e variam por setor/ano.
- * Quem chama informa a alíquota vigente.
+ * Logica interna, edge cases, validacao de input, regressoes.
+ * Exemplos pontuais de MOC/legislacao usam prefixo [MOC] no describe.
+ *
+ * NF-e real NUNCA vai aqui. Use nfe-ground-truth.test.ts (nota inteira).
+ * Regras de validacao SEFAZ NUNCA vao aqui. Use sefaz-validation-rules.test.ts.
+ *
+ * CBS (LC 214/2025, substitui PIS/COFINS): imposto = base x aliquota
+ * IBS (LC 214/2025, substitui ICMS/ISS): imposto = base x aliquota
+ * Aliquotas nao sao hardcoded, variam por setor/ano.
  */
 describe('calcCbs', () => {
   it('1000 × 0.009 = 9', () => {
