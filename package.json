@@ -89,7 +89,7 @@
     "sefaz"
   ],
   "lint-staged": {
-    "*.{ts,js,json,md,yml,yaml}": "prettier --write"
+    "*.{ts,js,json,yml,yaml}": "prettier --write"
   },
   "engines": {
     "node": ">=20"

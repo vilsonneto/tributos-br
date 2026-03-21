@@ -1,4 +1,4 @@
-# ADR-003: Tres niveis de teste e conformidade SEFAZ
+# ADR-003: Três níveis de teste e conformidade SEFAZ
 
 ## Status
 
@@ -6,65 +6,65 @@ Aceito
 
 ## Contexto
 
-O tributos-br opera num dominio onde "teste passando" nao significa "calculo correto". Um teste unitario pode validar que `1000 x 0.18 = 180` e ainda assim produzir uma NF-e rejeitada pela SEFAZ por divergencia de arredondamento de R$0.01 (rejeicao 528).
+O tributos-br opera num domínio onde "teste passando" não significa "cálculo correto". Um teste unitário pode validar que `1000 x 0.18 = 180` e ainda assim produzir uma NF-e rejeitada pela SEFAZ por divergência de arredondamento de R$0,01 (rejeição 528).
 
-Alem disso, as fontes de verdade para calculos fiscais tem niveis de autoridade diferentes:
+Além disso, as fontes de verdade para cálculos fiscais têm níveis de autoridade diferentes:
 
-- A legislacao (LC 87/96, RICMS, EC 87/2015) define as formulas.
-- A SEFAZ valida matematica parcial na autorizacao (vICMS = vBC x pICMS, tolerancia R$0.01), mas NAO valida MVA, beneficio fiscal ou reducao de base.
-- Uma NF-e autorizada (cStat 100) e evidencia empirica de que o calculo foi aceito, nao prova de corretude juridica (pode ser glosada em auditoria posterior, ate 5 anos).
-- O MOC 7.0 (Manual de Orientacao do Contribuinte) e especificacao de schema XML e regras de validacao. Nao contem exemplos numericos de calculo.
+- A legislação (LC 87/96, RICMS, EC 87/2015) define as fórmulas.
+- A SEFAZ valida matemática parcial na autorização (vICMS = vBC x pICMS, tolerância R$0,01), mas NÃO valida MVA, benefício fiscal ou redução de base.
+- Uma NF-e autorizada (cStat 100) é evidência empírica de que o cálculo foi aceito, não prova de corretude jurídica (pode ser glosada em auditoria posterior, até 5 anos).
+- O MOC 7.0 (Manual de Orientação do Contribuinte) é especificação de schema XML e regras de validação. Não contém exemplos numéricos de cálculo.
 
-Essas distincoes exigem que os testes sejam organizados por nivel de confianca, nao apenas por modulo.
+Essas distinções exigem que os testes sejam organizados por nível de confiança, não apenas por módulo.
 
-## Decisao
+## Decisão
 
-### Tres niveis de teste
+### Três níveis de teste
 
-| Nivel                  | Arquivo                          | Fonte de verdade                 | Escopo                                                                                                                |
-| ---------------------- | -------------------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| **E2E fiscal**         | `nfe-ground-truth.test.ts`       | NF-e reais (cStat 100)           | Nota inteira: todos os tributos presentes no documento testados juntos. Nunca fatiar por calculadora.                 |
-| **Conformidade SEFAZ** | `sefaz-validation-rules.test.ts` | Regras de validacao do MOC/NTs   | Valida que nenhum output viola rejeicoes da SEFAZ (528, 529, 530, 534, 536, 694-696).                                 |
-| **Unitario**           | `[calculadora].test.ts`          | Legislacao, formulas, edge cases | Formula isolada, validacao de input, regressao. Prefixo `[MOC]` no describe quando o caso vem de documento normativo. |
+| Nível                  | Arquivo                          | Fonte de verdade                   | Escopo                                                                                                                  |
+| ---------------------- | -------------------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **E2E fiscal**         | `nfe-ground-truth.test.ts`       | NF-e reais (cStat 100)            | Nota inteira: todos os tributos presentes no documento testados juntos. Nunca fatiar por calculadora.                    |
+| **Conformidade SEFAZ** | `sefaz-validation-rules.test.ts` | Regras de validação do MOC/NTs     | Valida que nenhum output viola rejeições da SEFAZ (528, 529, 530, 534, 536, 694-696).                                   |
+| **Unitário**           | `[calculadora].test.ts`          | Legislação, fórmulas, edge cases   | Fórmula isolada, validação de input, regressão. Prefixo `[MOC]` no describe quando o caso vem de documento normativo.   |
 
-### Hierarquia de confianca
+### Hierarquia de confiança
 
-Quando ha conflito entre fontes: Legislacao > NT SEFAZ > NF-e real > Unitario.
+Quando há conflito entre fontes: Legislação > NT SEFAZ > NF-e real > Unitário.
 
-Justificativa por nivel:
+Justificativa por nível:
 
-- **Legislacao prevalece sobre tudo** (art. 97 CTN). Regras de validacao do MOC nao tem forca de lei.
-- **NT SEFAZ** atualiza o MOC e pode adicionar/alterar regras de validacao. Sempre prevalece sobre o MOC base.
-- **NF-e real** e evidencia de aceitacao pratica. Se NF-e diverge do unitario, o unitario esta errado. Se NF-e diverge da legislacao, documentar como divergencia conhecida.
-- **Unitario** e derivado da interpretacao do implementador sobre a legislacao. E o nivel mais fragil.
+- **Legislação prevalece sobre tudo** (art. 97 CTN). Regras de validação do MOC não têm força de lei.
+- **NT SEFAZ** atualiza o MOC e pode adicionar/alterar regras de validação. Sempre prevalece sobre o MOC base.
+- **NF-e real** é evidência de aceitação prática. Se NF-e diverge do unitário, o unitário está errado. Se NF-e diverge da legislação, documentar como divergência conhecida.
+- **Unitário** é derivado da interpretação do implementador sobre a legislação. É o nível mais frágil.
 
-### NF-e como documento atomico
+### NF-e como documento atômico
 
-Uma NF-e e um fato fiscal indivisivel. Ela contem ICMS, IPI, PIS, COFINS, DIFAL, CBS, IBS, todos interdependentes. Fatiar por calculadora destroi a coerencia que torna o ground truth valioso.
+Uma NF-e é um fato fiscal indivisível. Ela contém ICMS, IPI, PIS, COFINS, DIFAL, CBS, IBS, todos interdependentes. Fatiar por calculadora destrói a coerência que torna o ground truth valioso.
 
-Quando o arquivo crescer para 15-20+ NF-e, dividir por perfil de operacao (interestadual, ST, DIFAL), nao por calculadora.
+Quando o arquivo crescer para 15-20+ NF-e, dividir por perfil de operação (interestadual, ST, DIFAL), não por calculadora.
 
-### Tolerancias de arredondamento SEFAZ
+### Tolerâncias de arredondamento SEFAZ
 
-| Rejeicao | Campo         | Regra                          | Tolerancia | Escopo   |
+| Rejeição | Campo         | Regra                          | Tolerância | Escopo   |
 | -------- | ------------- | ------------------------------ | ---------- | -------- |
-| 528      | vICMS         | vBC x pICMS                    | R$0.01     | Por item |
-| 529      | vICMSST       | baseST x pICMSST - icmsProprio | R$0.01     | Por item |
-| 530      | vIPI          | vBC x pIPI                     | R$0.01     | Por item |
-| 534      | vPIS          | vBC x pPIS                     | R$0.01     | Por item |
-| 536      | vCOFINS       | vBC x pCOFINS                  | R$0.01     | Por item |
-| 694-696  | DIFAL/FCP     | Regras especificas             | R$0.01     | Por item |
-| 631-652  | Totalizadores | Soma dos itens                 | Variavel   | Por nota |
+| 528      | vICMS         | vBC x pICMS                    | R$0,01     | Por item |
+| 529      | vICMSST       | baseST x pICMSST - icmsPróprio | R$0,01     | Por item |
+| 530      | vIPI          | vBC x pIPI                     | R$0,01     | Por item |
+| 534      | vPIS          | vBC x pPIS                     | R$0,01     | Por item |
+| 536      | vCOFINS       | vBC x pCOFINS                  | R$0,01     | Por item |
+| 694-696  | DIFAL/FCP     | Regras específicas             | R$0,01     | Por item |
+| 631-652  | Totalizadores | Soma dos itens                 | Variável   | Por nota |
 
-A lib deve calcular pela legislacao com precisao maxima e usar a tolerancia apenas como rede de seguranca, nunca como alvo.
+A lib deve calcular pela legislação com precisão máxima e usar a tolerância apenas como rede de segurança, nunca como alvo.
 
-### O que o MOC NAO e
+### O que o MOC NÃO é
 
-O MOC 7.0 e especificacao de schema XML + regras de validacao. Nao e manual de calculo. Nao contem exemplos numericos passo a passo. As fontes de calculo sao: legislacao, NTs e NF-e reais.
+O MOC 7.0 é especificação de schema XML + regras de validação. Não é manual de cálculo. Não contém exemplos numéricos passo a passo. As fontes de cálculo são: legislação, NTs e NF-e reais.
 
-## Consequencias
+## Consequências
 
-- Cada arquivo de teste tem header explicito dizendo o que pertence e o que NAO pertence.
-- Contributors sabem exatamente onde colocar cada tipo de teste (arvore de decisao de 3 perguntas no CLAUDE.md/CONTRIBUTING.md).
-- Divergencias entre niveis sao documentadas com `TODO(nfe-divergencia)` e issue aberta.
-- Feature futura identificada: `validarResultado()` exportada pela lib, replicando regras de validacao SEFAZ como diferencial competitivo.
+- Cada arquivo de teste tem header explícito dizendo o que pertence e o que NÃO pertence.
+- Contributors sabem exatamente onde colocar cada tipo de teste (árvore de decisão de 3 perguntas no CONTRIBUTING.md).
+- Divergências entre níveis são documentadas com `TODO(nfe-divergencia)` e issue aberta.
+- Feature futura identificada: `validarResultado()` exportada pela lib, replicando regras de validação SEFAZ como diferencial competitivo.
