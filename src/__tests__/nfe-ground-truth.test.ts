@@ -8,17 +8,17 @@ import { Decimal } from '../precision/index.js'
 /**
  * E2E fiscal — NF-e reais aceitas pela SEFAZ autorizadora (cStat 100).
  *
- * Cada NF-e e testada INTEIRA: ICMS, IPI, PIS, COFINS, DIFAL, CBS, IBS,
+ * Cada NF-e é testada INTEIRA: ICMS, IPI, PIS, COFINS, DIFAL, CBS, IBS,
  * todos os tributos presentes no documento. Nunca fatiar NF-e por calculadora.
  *
- * Os valores esperados sao extraidos diretamente do XML da NF-e, nao da
- * legislacao ou da implementacao. Conforme ADR-002, esses testes so mudam
+ * Os valores esperados são extraídos diretamente do XML da NF-e, não da
+ * legislação ou da implementação. Conforme ADR-002, esses testes só mudam
  * quando a lei muda.
  *
  * Regras para contribuidores:
- *   - Nunca ajustar valores pra "passar". O esperado e a NF-e.
- *   - Divergencia legitima? Documentar com TODO(nfe-divergencia) e abrir issue.
- *   - Dados inventados NUNCA vao aqui. Use o arquivo unitario da calculadora.
+ *   - Nunca ajustar valores pra "passar". O esperado é a NF-e.
+ *   - Divergência legítima? Documentar com TODO(nfe-divergencia) e abrir issue.
+ *   - Dados inventados NUNCA vão aqui. Use o arquivo unitário da calculadora.
  *   - Cada describe cita chave de acesso e protocolo da NF-e.
  */
 
