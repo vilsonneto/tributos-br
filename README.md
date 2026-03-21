@@ -155,6 +155,21 @@ Não é necessário abandonar libs existentes para usar tributos-br. A camada de
 
 ---
 
+## Roadmap: Reforma Tributária (CBS/IBS)
+
+A reforma tributária do consumo (LC 214/2025) substitui PIS/COFINS por CBS e ICMS/ISS por IBS entre 2026 e 2033. O tributos-br já suporta `calcCbs()` e `calcIbs()` desde a v1.0.0.
+
+| Fase | Período | O que muda | Status tributos-br |
+| ---- | ------- | ---------- | -------------------|
+| Teste | 2026 | Campos CBS/IBS opcionais na NF-e (NT 2025.002). Alíquotas teste: CBS 0,9%, IBS 0,1% | **Suportado.** calcCbs + calcIbs implementados. NF-e #1 já tem ground truth CBS/IBS. |
+| Transição | 2027-2028 | CBS/IBS obrigatórios. PIS/COFINS e ICMS coexistem com alíquotas reduzidas. | **Parcial.** Calculadoras existem, mas `calcTransicao()` com ponderação entre regimes ainda não (issue #66). |
+| Dual | 2029-2032 | Regime dual. Alíquotas CBS/IBS sobem, PIS/COFINS e ICMS descem proporcionalmente. | **Planejado.** Depende de `calcTransicao()` + alíquotas definitivas da regulamentação. |
+| Pleno | 2033 | CBS/IBS pleno. PIS/COFINS e ICMS extintos. | **Planejado.** calcCbs + calcIbs já prontos. Falta remover calculadoras legadas. |
+
+A lib recebe alíquotas como parâmetro, então qualquer mudança de alíquota pela regulamentação funciona sem atualização de código. A feature pendente é `calcTransicao()` (issue [#66](https://github.com/vilsonneto/tributos-br/issues/66)), que pondera resultado antigo x novo conforme fator de transição do ano-calendário.
+
+---
+
 ## Escopo e limitações
 
 O tributos-br cobre cálculos tributários com precisão validada contra NF-e reais. É importante saber o que está e o que não está coberto.
