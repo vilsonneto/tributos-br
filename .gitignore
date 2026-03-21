@@ -144,3 +144,5 @@ vite.config.ts.timestamp-*
 
 # Claude Code
 /.claude
+.agents/
+skills-lock.json
